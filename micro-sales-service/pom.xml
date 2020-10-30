@@ -5,13 +5,13 @@
 	xmlns:beans="http://www.springframework.org/schema/beans">
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>com.ati</groupId>
+	<groupId>com.ahasan</groupId>
 	<artifactId>micro-sales-service</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
 	<name>microser-sales-service</name>
-	<description>user service demo project</description>
+	<description>imtem service demo project</description>
 
 	<parent>
 		<groupId>org.springframework.boot</groupId>
@@ -39,6 +39,12 @@
 			<artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
 		</dependency>
 
+		<!-- https://mvnrepository.com/artifact/org.springframework.cloud/spring-cloud-starter-security -->
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-oauth2</artifactId>
+		</dependency>
+
 		<!-- https://mvnrepository.com/artifact/mysql/mysql-connector-java -->
 		<dependency>
 			<groupId>mysql</groupId>
@@ -56,18 +62,6 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-devtools</artifactId>
-		</dependency>
-
-		<!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-security -->
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-security</artifactId>
-		</dependency>
-
-		<!-- https://mvnrepository.com/artifact/org.springframework.cloud/spring-cloud-starter-security -->
-		<dependency>
-			<groupId>org.springframework.cloud</groupId>
-			<artifactId>spring-cloud-starter-oauth2</artifactId>
 		</dependency>
 
 		<dependency>
