@@ -2,36 +2,36 @@ package com.ahasan.item.dto;
 
 public class ItemDTO {
 
-	private Long productId;
+	private Long itemId;
 
-	private String productName;
+	private String itemName;
 
-	private String productSize;
+	private String itemSize;
 
 	private String sales;
 
-	public Long getProductId() {
-		return productId;
+	public Long getItemId() {
+		return itemId;
 	}
 
-	public void setProductId(Long productId) {
-		this.productId = productId;
+	public void setItemId(Long itemId) {
+		this.itemId = itemId;
 	}
 
-	public String getProductName() {
-		return productName;
+	public String getItemName() {
+		return itemName;
 	}
 
-	public void setProductName(String productName) {
-		this.productName = productName;
+	public void setItemName(String itemName) {
+		this.itemName = itemName;
 	}
 
-	public String getProductSize() {
-		return productSize;
+	public String getItemSize() {
+		return itemSize;
 	}
 
-	public void setProductSize(String productSize) {
-		this.productSize = productSize;
+	public void setItemSize(String itemSize) {
+		this.itemSize = itemSize;
 	}
 
 	public String getSales() {
