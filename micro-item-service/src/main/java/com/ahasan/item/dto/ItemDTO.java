@@ -1,5 +1,8 @@
 package com.ahasan.item.dto;
 
+import javax.persistence.Column;
+import javax.validation.constraints.Size;
+
 public class ItemDTO {
 
 	private Long itemId;
