@@ -12,8 +12,9 @@ public class BaseResponse {
 	private int status;
 
 	BaseResponse() {
+		
 	}
-
+	
 	public BaseResponse(String message, int status) {
 		this.message = message;
 		this.status = status;
