@@ -74,7 +74,7 @@ public class SwaggerConfig {
 		List<AuthorizationScope> authorizationScopeList = newArrayList();
 		authorizationScopeList.add(new AuthorizationScope("READ", "read all"));
 		authorizationScopeList.add(new AuthorizationScope("WRITE", "access all"));
-		authorizationScopeList.add(new AuthorizationScope("TRUSTED", "trusted all"));
+//		authorizationScopeList.add(new AuthorizationScope("TRUSTED", "trusted all"));
 		List<GrantType> grantTypes = newArrayList();
 		GrantType passwordCredentialsGrant = new ResourceOwnerPasswordCredentialsGrant("http://localhost:9191/auth-api/oauth/token");
 		grantTypes.add(passwordCredentialsGrant);
@@ -88,10 +88,10 @@ public class SwaggerConfig {
 
 	private List<SecurityReference> defaultAuth() {
 
-		final AuthorizationScope[] authorizationScopes = new AuthorizationScope[3];
+		final AuthorizationScope[] authorizationScopes = new AuthorizationScope[2];
 		authorizationScopes[0] = new AuthorizationScope("READ", "read all");
-		authorizationScopes[1] = new AuthorizationScope("TRUSTED", "trust all");
-		authorizationScopes[2] = new AuthorizationScope("WRITE", "write all");
+		authorizationScopes[1] = new AuthorizationScope("WRITE", "write all");
+//		authorizationScopes[2] = new AuthorizationScope("TRUSTED", "trust all");
 
 		return Collections.singletonList(new SecurityReference("oauth2", authorizationScopes));
 	}
