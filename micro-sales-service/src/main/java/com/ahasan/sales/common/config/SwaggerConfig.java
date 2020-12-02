@@ -53,7 +53,7 @@ public class SwaggerConfig {
 	public Docket productApi() {
 
 		return new Docket(DocumentationType.SWAGGER_2).select()
-				.apis(RequestHandlerSelectors.basePackage("com.ahasan.item.controller")).paths(PathSelectors.any()).build()
+				.apis(RequestHandlerSelectors.basePackage("com.ahasan.sales.controller")).paths(PathSelectors.any()).build()
 				.securityContexts(Collections.singletonList(securityContext()))
 				.securitySchemes(Arrays.asList(securitySchema()/* , apiKey(), apiCookieKey() */)).apiInfo(apiInfo());
 
