@@ -1,50 +1,55 @@
-## Spring Boot, Spring Cloud Oauth2, Spring Cloud Netflix Eureka, Spring CLoud Zuul, Hystrix Monitoring Dashboard, Swagger 2, Spring Data JPA, MySQL
-
-
 
 # Overview
-
 The architecture is composed by five services:
 
-   * `micro-eureka-server`: Service **Discovery Server** created with Eureka
-   * `micro-api-getway`: API Gateway created with Zuul that uses the discovery-service to send the requests to the services. It uses Ribbon as Load Balancer
-   * `micro-auth-service`: Simple REST service created with `Spring Boot, Spring Cloud Oauth2, Spring Data JPA, MySQL` to use as an **authorization service**
-   * `micro-product-service`: Simple REST service created with `Spring Boot, Spring Cloud Oauth2, Spring Data JPA, MySQL` to use as an **resource service**
-   * `micro-sales-service`: Simple REST service created with `Spring Boot, Spring Cloud Oauth2, Spring Data JPA, MySQL` to use as an **resource service**
- 
+   * [`micro-eureka-server`](https://github.com/habibsumoncse/secure-spring-boot-microservice#eureka-service): Service **Discovery Server** created with Eureka
+   * [`micro-api-getway`](https://github.com/habibsumoncse/secure-spring-boot-microservice#api-gateway-service): API Gateway created with Zuul that uses the discovery-service to send the requests to the services. It uses Ribbon as a Load Balancer
+   * [`micro-auth-service`](https://github.com/habibsumoncse/secure-spring-boot-microservice#authorization-service): Simple REST service created with `Spring Boot, Spring Cloud Oauth2, Spring Data JPA, MySQL` to use as an **authorization service**
+   * [`micro-item-service`](https://github.com/habibsumoncse/secure-spring-boot-microservice#item-service): Simple REST service created with `Spring Boot, Spring Data JPA, MySQL` to use as a **resource service**
+   * [`micro-sales-service`](https://github.com/habibsumoncse/secure-spring-boot-microservice#sales-service): Simple REST service created with `Spring Boot, Spring Data JPA, MySQL` to use as a **resource service**
+
+### tools you will need
+* Maven 3.0+ is your build tool
+* Your favorite IDE but we will recommend `STS-4-4.4.1 version`. We use STS.
+* MySQL server
+* JDK 1.8+
+
 ##
-# micro-eureka-service
+# Eureka Service
 
 Eureka Server is an application that holds the information about all client-service applications. Every Micro service will register into the Eureka server and Eureka server knows all the client applications running on each port and IP address. Eureka Server is also known as Discovery Server.
 
-## How to run?
+## How to run eureka service?
 
 ### Build Project
 Now, you can create an executable JAR file, and run the Spring Boot application by using the Maven or Gradle commands shown below −
 For Maven, use the command as shown below −
 
 `mvn clean install`
+
 or
 
 **Project import in sts4 IDE** 
-```File >import >maven >Existing maven project > Root Directory-Browse > Select project form root folder > Finish```
+```File > import > maven > Existing maven project > Root Directory-Browse > Select project form root folder > Finish```
 
 ### Run project 
 
 After “BUILD SUCCESSFUL”, you can find the JAR file under the build/libs directory.
 Now, run the JAR file by using the following command −
 
- `java –jar <JARFILE> `
+Run on terminal `java –jar <JARFILE> `
 
  Run on sts IDE
  
  `click right button on the project >Run As >Spring Boot App`
  
- Discovery-Service URL: `http://localhost:8761`
+Eureka Discovery-Service URL: `http://localhost:8761`
 
+##
+# Authorization Service
 
+![1](https://user-images.githubusercontent.com/31319842/99893591-9d003b80-2cab-11eb-9f06-1d5a785c775b.png)
 
-# micro-auth-service
 Whenever we think of microservices and distributed applications, the first point that comes to mind is security. Obviously, in distributed architectures, it is really difficult to manage security as we do not have much control over the application. So in this situation, we always need to have a central entry point to this distributed architecture. This is the reason why, in microservices, we have a separate and dedicated layer for all these purposes. This layer is known as the API Gateway. It is an entry point for a microservice's architecture.
 
 To maintain security, the first necessary condition is to restrict direct microservice calls for outside callers. All calls should only go through the API Gateway. The API Gateway is mainly responsible for authentication and authorization of the API requests made by external callers. Also, this layer performs the routing of API requests that come from external clients to respective microservices. This allows the API Gateway to act as an entry point for all its respective microservices. So, we can say the API Gateway is mainly responsible for the security of microservices.
@@ -72,113 +77,516 @@ OAuth 2 is an authorization method to provide access to protected resources over
 * `Refresh Token`: It is used to get a 00new access token, not sent with each request, usually lives longer than access token.
 
 
+### Quick Start a Cloud Security App
 
-### Test Product service Service
+Let's start by configuring spring cloud oauth2 in a Spring Boot application for microservice security.
 
-Now that both the services are up and running, let’s test the `getAllProducts` form product service method by passing the earlier access token obtained for user `admin` in the header as shown below. Here `48b3ea3c-36c5-4359-accb-35086a3e8ede` is the `access_token` for `admin`.
-
-Here `admin` belongs to `PRODUCT_VIEW` and hence he can view the products.
-
-### HTTP GET Request
+First, we need to add the `spring-cloud-starter-oauth2` dependency:
 ```
-curl --request GET http://localhost:8180/product-api/product/find \
-     --header "Authorization:Bearer 48b3ea3c-36c5-4359-accb-35086a3e8ede"
+<dependency>
+    <groupId>org.springframework.cloud</groupId>
+    <artifactId>spring-cloud-starter-oauth2</artifactId>
+    <version>2.2.2.RELEASE</version>
+</dependency>
 ```
-# Zuul API Gateway
+This will also bring in the `spring-cloud-starter-security`dependency.
+```
+<dependency>
+     <groupId>org.springframework.cloud</groupId>
+     <artifactId>spring-cloud-starter-security</artifactId>
+</dependency>
+```
 
-***Enable Zuul Service Proxy***
-Now add the `@EnableZuulProxy` and `@EnableEurekaClient` annotation on Spring boot application class present in src folder. With this annotation, this artifact will act like a Zuul service proxy and will enable all the features of a API gateway layer as described before. We will then add some filters and route configurations.
+**Create tables for users, groups, group authorities and group members**
+
+For Spring OAuth2 mechanism to work, we need to create tables to hold users, groups, group authorities and group members. We can create these tables as part of application start up by providing the table definations in `schema.sql` file as shown below. This setup is good enough for POC code.
+`src/main/resources/schema.sql`
 ```
+create table if not exists  oauth_client_details (
+  client_id varchar(255) not null,
+  client_secret varchar(255) not null,
+  web_server_redirect_uri varchar(2048) default null,
+  scope varchar(255) default null,
+  access_token_validity int(11) default null,
+  refresh_token_validity int(11) default null,
+  resource_ids varchar(1024) default null,
+  authorized_grant_types varchar(1024) default null,
+  authorities varchar(1024) default null,
+  additional_information varchar(4096) default null,
+  autoapprove varchar(255) default null,
+  primary key (client_id)
+);
+
+create table if not exists  permission (
+  id int(11) not null auto_increment,
+  name varchar(512) default null,
+  primary key (id),
+  unique key name (name)
+) ;
+
+create table if not exists role (
+  id int(11) not null auto_increment,
+  name varchar(255) default null,
+  primary key (id),
+  unique key name (name)
+) ;
+
+create table if not exists  user (
+  id int(11) not null auto_increment,
+  username varchar(100) not null,
+  password varchar(1024) not null,
+  email varchar(1024) not null,
+  enabled tinyint(4) not null,
+  accountNonExpired tinyint(4) not null,
+  credentialsNonExpired tinyint(4) not null,
+  accountNonLocked tinyint(4) not null,
+  primary key (id),
+  unique key username (username)
+) ;
+
+create table  if not exists permission_role (
+  permission_id int(11) default null,
+  role_id int(11) default null,
+  key permission_id (permission_id),
+  key role_id (role_id),
+  constraint permission_role_ibfk_1 foreign key (permission_id) references permission (id),
+  constraint permission_role_ibfk_2 foreign key (role_id) references role (id)
+);
+
+create table if not exists role_user (
+  role_id int(11) default null,
+  user_id int(11) default null,
+  key role_id (role_id),
+  key user_id (user_id),
+  constraint role_user_ibfk_1 foreign key (role_id) references role (id),
+  constraint role_user_ibfk_2 foreign key (user_id) references user (id)
+);
+```
+* `oauth_client_details table` is used to store client details.
+* `oauth_access_token` and `oauth_refresh_token` is used internally by OAuth2 server to store the user tokens.
+
+***Create a client***
+
+Let’s insert a record in `oauth_client_details` table for a client named appclient with a password `appclient`.
+
+Here, `appclient` is the ID has access to the `product-server` and `sales-server` resource.
+
+I have used `CodeachesBCryptPasswordEncoder.java` available [here](https://github.com/habibsumoncse/spring-boot-microservice-auth-zuul-eureka-hystrix/blob/master/micro-auth-service/src/main/resources/schema.sql) to get the Bcrypt encrypted password.
+
+`src/main/resources/data.sql`
+
+```
+INSERT INTO oauth_client_details (client_id, client_secret, web_server_redirect_uri, scope, access_token_validity, refresh_token_validity, resource_ids, authorized_grant_types, additional_information) 
+VALUES ('mobile', '{bcrypt}$2a$10$gPhlXZfms0EpNHX0.HHptOhoFD1AoxSr/yUIdTqA8vtjeP4zi0DDu', 'http://localhost:8080/code', 'READ,WRITE', '3600', '10000', 'inventory,payment', 'authorization_code,password,refresh_token,implicit', '{}');
+
+/*client_id - client_secret*/
+/* mobile - pin* /
+
+
+ INSERT INTO PERMISSION (NAME) VALUES
+ ('create_profile'),
+ ('read_profile'),
+ ('update_profile'),
+ ('delete_profile');
+
+ INSERT INTO role (NAME) VALUES ('ROLE_admin'),('ROLE_editor'),('ROLE_operator');
+
+ INSERT INTO PERMISSION_ROLE (PERMISSION_ID, ROLE_ID) VALUES
+     (1,1), /*create-> admin */
+     (2,1), /* read admin */
+     (3,1), /* update admin */
+     (4,1), /* delete admin */
+     (2,2),  /* read Editor */
+     (3,2),  /* update Editor */
+     (2,3);  /* read operator */
+
+
+ insert into user (id, username,password, email, enabled, accountNonExpired, credentialsNonExpired, accountNonLocked) VALUES ('1', 'admin','{bcrypt}$2a$12$xVEzhL3RTFP1WCYhS4cv5ecNZIf89EnOW4XQczWHNB/Zi4zQAnkuS', 'habibsumoncse2@gmail.com', '1', '1', '1', '1');
+ insert into  user (id, username,password, email, enabled, accountNonExpired, credentialsNonExpired, accountNonLocked) VALUES ('2', 'ahasan', '{bcrypt}$2a$12$DGs/1IptlFg0szj.3PttmeC8swHZs/pZ6YEKng4Cl1l2woMtkNhvi','habibsumoncse2@gmail.com', '1', '1', '1', '1');
+ insert into  user (id, username,password, email, enabled, accountNonExpired, credentialsNonExpired, accountNonLocked) VALUES ('3', 'user', '{bcrypt}$2a$12$udISUXbLy9ng5wuFsrCMPeQIYzaKtAEXNJqzeprSuaty86N4m6emW','habibsumoncse2@gmail.com', '1', '1', '1', '1');
+ /*
+ username - passowrds:
+ admin - admin
+ ahasan - ahasan
+ user - user
+ */
+
+
+INSERT INTO ROLE_USER (ROLE_ID, USER_ID)
+    VALUES
+    (1, 1), /* admin-admin */,
+    (2, 2), /* ahasan-editor */ ,
+    (3, 3); /* user-operatorr */ ;
+```
+### Enable OAuth2 mechanism
+
+Annotate the `Oauth2AuthorizationServerApplication.java` with `@EnableAuthorizationServer`. This enables the Spring to consider this service as authorization Server.
+```
+@EnableAuthorizationServer
 @SpringBootApplication
-@EnableZuulProxy
-@EnableEurekaClient
-public class ZuulApiGetWayRunner {
+public class Oauth2AuthorizationServerApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(ZuulApiGetWayRunner.class, args);
-		System.out.println("Zuul server is running...");
-	}
-
-	@Bean
-	public PreFilter preFilter() {
-		return new PreFilter();
-	}
-
-	@Bean
-	public PostFilter postFilter() {
-		return new PostFilter();
-	}
-
-	@Bean
-	public ErrorFilter errorFilter() {
-		return new ErrorFilter();
-	}
-
-	@Bean
-	public RouteFilter routeFilter() {
-		return new RouteFilter();
-	}
+  public static void main(String[] args) {
+    SpringApplication.run(Oauth2AuthorizationServerApplication.class, args);
+  }
 }
 ```
-***Zuul routes configuration***
-Open application.properties and add below entries-
+### Configure OAuth2 Server
+
+Let’s create a class `AuthServerConfig.java` with below details.
+
+* **JdbcTokenStore** implements token services that stores tokens in a database.
+* **BCryptPasswordEncoder** implements PasswordEncoder that uses the BCrypt strong hashing function. Clients can optionally supply a “strength” (a.k.a. log rounds in BCrypt) and a SecureRandom instance. The larger the strength parameter the more work will have to be done (exponentially) to hash the passwords. The value used in this example is 8 for client secret.
+* **AuthorizationServerEndpointsConfigurer** configures the non-security features of the Authorization Server endpoints, like token store, token customizations, user approvals and grant types.
+* **AuthorizationServerSecurityConfigurer** configures the security of the Authorization Server, which means in practical terms the /oauth/token endpoint.
+* **ClientDetailsServiceConfigurer** configures the ClientDetailsService, e.g. declaring individual clients and their properties.
+
 ```
-#Will start the gateway server @8080
-server.port=8180
-spring.application.name=zuul-server
+@Configuration
+public class AuthorizationServerConfiguration implements AuthorizationServerConfigurer {
 
-#eureka.client.serviceUrl.defaultZone=http://eureka:8761/eureka/
-eureka.client.serviceUrl.defaultZone=http://localhost:8761/eureka/
-eureka.instance.preferIpAddress=true
-
-# A prefix that can added to beginning of all requests. 
-#zuul.prefix=/api
-
-# Disable accessing services using service name (i.e. user-service).
-# They should be only accessed through the path defined below.
-zuul.ignored-services=*
+    
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+    
+    @Autowired
+    private DataSource dataSource;
+    
+    @Autowired
+    private AuthenticationManager authenticationManager;
 
 
+    @Bean
+    TokenStore jdbcTokenStore() {
+        return new JdbcTokenStore(dataSource);
+    }
 
-zuul.routes.third.id=auth-server
-zuul.routes.secound.id=sales-server
-zuul.routes.first.id=product-server
+    @Override
+    public void configure(AuthorizationServerSecurityConfigurer security) throws Exception {
+        security.checkTokenAccess("isAuthenticated()").tokenKeyAccess("permitAll()");
 
-#Disable Spring Boot basic authentication
-security.basic.enabled=false
-security.user.password=none
+    }
 
+    @Override
+    public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
+        clients.jdbc(dataSource).passwordEncoder(passwordEncoder);
 
-# Map paths to employee service
-zuul.routes.product-server.path=/product-api/**
-zuul.routes.product-server.serviceId=product-server
-zuul.routes.product-server.stripPrefix=false
+    }
 
-# Map paths to sales service
-zuul.routes.sales-server.path=/sales-api/**
-zuul.routes.sales-server.serviceId=sales-server
-zuul.routes.sales-server.stripPrefix=false
-
-# Map paths to user service
-zuul.routes.auth-server.path=/auth-api/**
-zuul.routes.auth-server.serviceId=auth-server
-zuul.routes.auth-server.stripPrefix=false
-
-#zuul.routes.first.url=employee-service
-#zuul.routes.second.url=user-server
-
-
-eureka.instance.lease-expiration-duration-in-seconds=1
-eureka.instance.lease-renewal-interval-in-seconds=2
-#eureka.client.healthcheck.enabled=true
-#logging.level.zuul.api.getway=DEBUG
-
-
-#Set the Hystrix isolation policy to the thread pool
-zuul.ribbon-isolation-strategy=thread
-
-
-
-#each route uses a separate thread pool
-zuul.thread-pool.use-separate-thread-pools=true
+    @Override
+    public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
+        endpoints.tokenStore(jdbcTokenStore());
+        endpoints.authenticationManager(authenticationManager);
+    }
+}
 ```
+***Configure User Security Authentication***
+Let’s create a class `UserSecurityConfig.java` to handle user authentication.
+
+* **PasswordEncoder** implements PasswordEncoder that uses the BCrypt strong hashing function. Clients can optionally supply a “strength” (a.k.a. log rounds in BCrypt) and a SecureRandom instance. The larger the strength parameter the more work will have to be done (exponentially) to hash the passwords. The value used in this example is 4 for user’s password.
+```
+@Configuration
+public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
+
+
+    @Autowired
+    private UserDetailsService userDetailsService;
+
+    @Bean
+    protected AuthenticationManager getAuthenticationManager() throws Exception {
+        return super.authenticationManagerBean();
+    }
+
+    @Bean
+    PasswordEncoder passwordEncoder() {
+        return PasswordEncoderFactories.createDelegatingPasswordEncoder();
+    }
+
+
+    @Override
+    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+        auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
+    }
+}
+```
+
+### Test Authorization Service
+***Get Access Token***
+
+Let’s get the access token for `admin` by passing his credentials as part of header along with authorization details of appclient by sending `client_id` `client_pass` `username` `userpsssword`
+
+Now hit the POST method URL via POSTMAN to get the OAUTH2 token.
+
+***http://localhost:8080/oauth/token***
+
+Now, add the Request Headers as follows −
+
+*`Authorization` − Basic Auth with your Client Id and Client secret.
+
+*`Content Type` − application/x-www-form-urlencoded
+![1](https://user-images.githubusercontent.com/31319842/95816138-2e40d180-0d40-11eb-99c7-403cdf7ef070.png)
+
+Now, add the Request Parameters as follows −
+
+* `grant_type` = password
+* `username` = your username
+* ` password` = your password
+![2](https://user-images.githubusercontent.com/31319842/95816163-3bf65700-0d40-11eb-9c87-7b721e0a268f.png)
+
+**HTTP POST Response**
+```
+{ 
+  "access_token":"000ff762-414c-4605-858a-0ed7bee6f68e",
+  "token_type":"bearer",
+  "refresh_token":"79aabc70-f310-4c49-bf7e-516208b3bef4",
+  "expires_in":999999,
+  "scope":"read write"
+}
+```
+
+##
+# Item Service -resource service
+
+Now we will see `micro-item-service` as a resource service. The `micro-item-service` a REST API that lets you CRUD (Create, Read, Update, and Delete) products. It creates a default set of items when the application loads using an `ItemApplicationRunner` bean.
+
+Add the following dependencies:
+
+* **Web:** Spring MVC and embedded Tomcat
+* **Actuator:** features to help you monitor and manage your application
+* **EurekaClient:** for service registration
+* **JPA:** to save/retrieve data
+* **MySQL:** to use store data on database
+* **RestRepositories:** to expose JPA repositories as REST endpoints
+* **Hibernate validator:** to use runtime exception handling and return error messages
+* **oauth2:** to use api endpoint security and user access auth permission
+
+***Configure Application info and Oauth2 Configuration to check token validaty from auth service***
+
+* `security.oauth2.resource.token-info-uri=http://localhost:9191/auth-api/oauth/check_token` That is used to check user given token validaty from authorization service.
+* `security.oauth2.client.client-id=mobile` Here `moblie` client-id that was we are already input in auth database of `micro-auth-service`
+* `security.oauth2.client.client-secret=pin` Here `pin` client-password that was we are already input in auth database of `micro-auth-service`
+
+Below we was used for checking user given token the following link `[http://localhost:9191/auth-api/oauth/check_token]` on the `http` means protocol, `localhost` for hostaddress, `9191` are port of `micro-auth-service`, we know auth service up on `9191` port `auth-api` are application context path of 'micro-auth-service' and `/oauth/check_token` is used to check token from auth service by spring security oauth2.
+
+```
+#Application Configuration
+server.port=8380
+spring.application.name=item-server
+server.servlet.context-path=/sales-api
+
+#oauth2 configuration
+security.oauth2.resource.token-info-uri=http://localhost:9191/auth-api/oauth/check_token
+security.oauth2.client.client-id=mobile
+security.oauth2.client.client-secret=pin
+```
+
+#### Enable oauth2 on sales service
+Now add the `@EnableResourceServer` and `@Configuration` annotation on Spring boot application class present in src folder. With this annotation, this artifact will act like a resource service. With this `@EnableResourceServer` annotation, this artifact will act like a resource service.
+
+
+```
+@Configuration
+@EnableResourceServer
+public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter {
+
+    private static final String RESOURCE_ID = "microservice";
+    private static final String SECURED_READ_SCOPE = "#oauth2.hasScope('READ')";
+    private static final String SECURED_WRITE_SCOPE = "#oauth2.hasScope('WRITE')";
+    private static final String SECURED_PATTERN = "/**";
+
+    @Override
+    public void configure(ResourceServerSecurityConfigurer resources) {
+        resources.resourceId(RESOURCE_ID);
+    }
+
+    @Override
+    public void configure(HttpSecurity http) throws Exception {
+        http.csrf().disable()
+                .sessionManagement().disable()
+                .authorizeRequests()
+//                 .antMatchers("/item/list").permitAll()
+                .and()
+                .requestMatchers()                
+                .antMatchers(SECURED_PATTERN).and().authorizeRequests()
+                .antMatchers(HttpMethod.POST, SECURED_PATTERN)
+                .access(SECURED_WRITE_SCOPE)
+                .anyRequest().access(SECURED_READ_SCOPE);
+    }
+}
+```
+## How to run item service?
+
+### Build Project
+Now, you can create an executable JAR file, and run the Spring Boot application by using the Maven shown below −
+For Maven, use the command as shown below −
+
+**Project import in sts4 IDE** 
+```File > import > maven > Existing maven project > Root Directory-Browse > Select project form root folder > Finish```
+
+### Run project 
+
+After “BUILD SUCCESSFUL”, you can find the JAR file under the build/libs directory.
+Now, run the JAR file by using the following command −
+
+ `java –jar <JARFILE> `
+ Run on sts IDE
+ `click right button on the project >Run As >Spring Boot App`
+ 
+Eureka Discovery-Service URL: `http://localhost:8761`
+
+After sucessfully run we can refresh Eureka Discovery-Service URL: `http://localhost:8761` will see `item-server` instance gate will be run on `http://localhost:8280` port
+
+***Test HTTP GET Request on item-service -resource service***
+```
+curl --request GET 'localhost:8180/item-api/item/find' --header 'Authorization: Bearer 62e2545c-d865-4206-9e23-f64a34309787'
+```
+* Here `[http://localhost:8180/item-api/item/find]` on the `http` means protocol, `localhost` for hostaddress `8180` are gateway service port because every api will be transmit by the   
+  gateway service, `item-api` are application context path of item service and `/item/find` is method URL.
+
+* Here `[Authorization: Bearer 62e2545c-d865-4206-9e23-f64a34309787']` `Bearer` is toiken type and `62e2545c-d865-4206-9e23-f64a34309787` is auth service provided token
+
+
+### For getting All API Information
+On this repository we will see `secure-microservice-architecture.postman_collection.json` file, this file have to `import` on postman then we will ses all API information for testing api.
+
+
+##
+# Sales Service -resource service
+Now we will see `micro-sales-service` as a resource service. The `micro-sales-service` a REST API that lets you CRUD (Create, Read, Update, and Delete) products. It creates a default set of items when the application loads using an `SalesApplicationRunner` bean.
+
+Add the following dependencies:
+
+* **Web:** Spring MVC and embedded Tomcat
+* **Actuator:** features to help you monitor and manage your application
+* **EurekaClient:** for service registration
+* **JPA:** to save/retrieve data
+* **MySQL:** to use store data on database
+* **RestRepositories:** to expose JPA repositories as REST endpoints
+* **Hibernate validator:** to use runtime exception handling and return error messages
+* **oauth2:** to use api endpoint security and user access auth permission
+
+#### Configure Application info and Oauth2 Configuration to check token validaty from auth service
+
+* `security.oauth2.resource.token-info-uri=http://localhost:9191/auth-api/oauth/check_token` That is used to check user given token validaty from authorization service.
+* `security.oauth2.client.client-id=mobile` Here `moblie` client-id that was we are already input in auth database of `micro-auth-service`
+* `security.oauth2.client.client-secret=pin` Here `pin` client-password that was we are already input in auth database of `micro-auth-service`
+
+Below we was used for checking user given token the following link `[http://localhost:9191/auth-api/oauth/check_token]` on the `http` means protocol, `localhost` for hostaddress, `9191` are port of `micro-auth-service`, we know auth service up on `9191` port `auth-api` are application context path of 'micro-auth-service' and `/oauth/check_token` is used to check token from auth service by spring security oauth2.
+```
+#Application Configuration
+server.port=8380
+spring.application.name=sales-server
+server.servlet.context-path=/sales-api
+
+#oauth2 configuration
+security.oauth2.resource.token-info-uri=http://localhost:9191/auth-api/oauth/check_token
+security.oauth2.client.client-id=mobile
+security.oauth2.client.client-secret=pin
+```
+
+#### Enable oauth2 on sales service as a resource service
+Now add the `@EnableResourceServer` and `@Configuration` annotation on Spring boot application class present in src folder. With this annotation, this artifact will act like a resource service. With this `@EnableResourceServer` annotation, this artifact will act like a resource service.
+
+
+```
+@Configuration
+@EnableResourceServer
+public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter {
+
+    private static final String RESOURCE_ID = "microservice";
+    private static final String SECURED_READ_SCOPE = "#oauth2.hasScope('READ')";
+    private static final String SECURED_WRITE_SCOPE = "#oauth2.hasScope('WRITE')";
+    private static final String SECURED_PATTERN = "/**";
+
+    @Override
+    public void configure(ResourceServerSecurityConfigurer resources) {
+        resources.resourceId(RESOURCE_ID);
+    }
+
+    @Override
+    public void configure(HttpSecurity http) throws Exception {
+        http.csrf().disable()
+                .sessionManagement().disable()
+                .authorizeRequests()
+//                 .antMatchers("/sales/list").permitAll()
+                .and()
+                .requestMatchers()                
+                .antMatchers(SECURED_PATTERN).and().authorizeRequests()
+                .antMatchers(HttpMethod.POST, SECURED_PATTERN)
+                .access(SECURED_WRITE_SCOPE)
+                .anyRequest().access(SECURED_READ_SCOPE);
+    }
+}
+```
+## How to run sales service?
+
+### Build Project
+Now, you can create an executable JAR file, and run the Spring Boot application by using the Maven shown below −
+For Maven, use the command as shown below −
+
+**Project import in sts4 IDE** 
+```File > import > maven > Existing maven project > Root Directory-Browse > Select project form root folder > Finish```
+
+### Run project 
+
+After “BUILD SUCCESSFUL”, you can find the JAR file under the build/libs directory.
+Now, run the JAR file by using the following command −
+
+ `java –jar <JARFILE> `
+ Run on sts IDE
+ `click right button on the project >Run As >Spring Boot App`
+ 
+Eureka Discovery-Service URL: `http://localhost:8761`
+
+After sucessfully run we can refresh Eureka Discovery-Service URL: `http://localhost:8761` will see `sales-server` instance gate will be run on `http://localhost:8280` port
+
+#### Test HTTP GET Request on resource service -resource service
+```
+curl --request GET 'localhost:8180/sales-api/sales/find' --header 'Authorization: Bearer 62e2545c-d865-4206-9e23-f64a34309787'
+```
+* Here `[http://localhost:8180/sales-api/sales/find]` on the `http` means protocol, `localhost` for hostaddress `8180` are gateway service port because every api will be transmit by the   
+  gateway service, `sales-api` are application context path of item service and `/sales/find` is method URL.
+
+* Here `[Authorization: Bearer 62e2545c-d865-4206-9e23-f64a34309787']` `Bearer` is toiken type and `62e2545c-d865-4206-9e23-f64a34309787` is auth service provided token
+
+
+### For getting All API Information
+On this repository we will see `secure-microservice-architecture.postman_collection.json` file, this file have to `import` on postman then we will ses all API information for testing api.
+
+
+##
+# API Gateway Service
+
+Gateway Server is an application that transmit all API to desire services. every resource services information such us: `service-name, context-path` will beconfigured into the gateway service and every request will transmit configured services by gateway
+
+
+## How to run API Gateway Service?
+
+### Build Project
+Now, you can create an executable JAR file, and run the Spring Boot application by using the Maven or Gradle commands shown below −
+For Maven, use the command as shown below −
+
+`mvn clean install`
+or
+
+**Project import in sts4 IDE** 
+```File > import > maven > Existing maven project > Root Directory-Browse > Select project form root folder > Finish```
+
+### Run project 
+
+After “BUILD SUCCESSFUL”, you can find the JAR file under the build/libs directory.
+Now, run the JAR file by using the following command −
+
+ `java –jar <JARFILE> `
+
+ Run on sts IDE
+ 
+ `click right button on the project >Run As >Spring Boot App`
+ 
+After sucessfully run we can refresh Eureka Discovery-Service URL: `http://localhost:8761` will see `zuul-server` on eureka dashboard. the gateway instance will be run on `http://localhost:8180` port
+
+![Screenshot from 2020-11-15 11-21-33](https://user-images.githubusercontent.com/31319842/99894579-6af0d880-2caf-11eb-84aa-d41b16cfbd12.png)
+
+After we seen start auth, sales, item, zuul instance then we can try `secure-microservice-architecture.postman_collection.json` imported API from postman with token
+
+
