@@ -27,6 +27,42 @@ First, we need to add the `spring-cloud-starter-hystrix-dashboard` dependency:
 	<version>1.4.7.RELEASE</version>
 </dependency>
 ```
+* The main application class `ZuulApiGetWayRunner` to start Spring boot application.
+```
+@SpringBootApplication
+@EnableZuulProxy
+@EnableEurekaClient
+@EnableHystrixDashboard
+public class ZuulApiGetWayRunner {
+
+	public static void main(String[] args) {
+		SpringApplication.run(ZuulApiGetWayRunner.class, args);
+		System.out.println("Zuul server is running...");
+	}
+
+	@Bean
+	public PreFilter preFilter() {
+		return new PreFilter();
+	}
+
+	@Bean
+	public PostFilter postFilter() {
+		return new PostFilter();
+	}
+
+	@Bean
+	public ErrorFilter errorFilter() {
+		return new ErrorFilter();
+	}
+
+	@Bean
+	public RouteFilter routeFilter() {
+		return new RouteFilter();
+	}
+}
+```
+***@EnableHystrixDashBoard*** – To give dashboard view of Hystrix stream.
+***@EnableCircuitBreaker*** – To enable Circuit breaker implementation.
 ##
 # Eureka Service
 
