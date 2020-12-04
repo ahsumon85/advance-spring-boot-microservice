@@ -61,8 +61,8 @@ public class ZuulApiGetWayRunner {
 	}
 }
 ```
-***@EnableHystrixDashBoard*** – To give dashboard view of Hystrix stream.
-***@EnableCircuitBreaker*** – To enable Circuit breaker implementation.
+* ***@EnableHystrixDashBoard*** – To give dashboard view of Hystrix stream.
+* ***@EnableCircuitBreaker*** – To enable Circuit breaker implementation.
 ##
 # Eureka Service
 
