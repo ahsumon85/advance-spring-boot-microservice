@@ -119,71 +119,6 @@ Now, add the Request Parameters as follows −
 
 Now we will see `micro-item-service` as a resource service. The `micro-item-service` a REST API that lets you CRUD (Create, Read, Update, and Delete) products. It creates a default set of items when the application loads using an `ItemApplicationRunner` bean.
 
-Add the following dependencies:
-
-* **Web:** Spring MVC and embedded Tomcat
-* **Actuator:** features to help you monitor and manage your application
-* **EurekaClient:** for service registration
-* **JPA:** to save/retrieve data
-* **MySQL:** to use store data on database
-* **RestRepositories:** to expose JPA repositories as REST endpoints
-* **Hibernate validator:** to use runtime exception handling and return error messages
-* **oauth2:** to use api endpoint security and user access auth permission
-
-***Configure Application info and Oauth2 Configuration to check token validaty from auth service***
-
-* `security.oauth2.resource.token-info-uri=http://localhost:9191/auth-api/oauth/check_token` That is used to check user given token validaty from authorization service.
-* `security.oauth2.client.client-id=mobile` Here `moblie` client-id that was we are already input in auth database of `micro-auth-service`
-* `security.oauth2.client.client-secret=pin` Here `pin` client-password that was we are already input in auth database of `micro-auth-service`
-
-Below we was used for checking user given token the following link `[http://localhost:9191/auth-api/oauth/check_token]` on the `http` means protocol, `localhost` for hostaddress, `9191` are port of `micro-auth-service`, we know auth service up on `9191` port `auth-api` are application context path of 'micro-auth-service' and `/oauth/check_token` is used to check token from auth service by spring security oauth2.
-
-```
-#Application Configuration
-server.port=8380
-spring.application.name=item-server
-server.servlet.context-path=/sales-api
-
-#oauth2 configuration
-security.oauth2.resource.token-info-uri=http://localhost:9191/auth-api/oauth/check_token
-security.oauth2.client.client-id=mobile
-security.oauth2.client.client-secret=pin
-```
-
-#### Enable oauth2 on sales service
-Now add the `@EnableResourceServer` and `@Configuration` annotation on Spring boot application class present in src folder. With this annotation, this artifact will act like a resource service. With this `@EnableResourceServer` annotation, this artifact will act like a resource service.
-
-
-```
-@Configuration
-@EnableResourceServer
-public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter {
-
-    private static final String RESOURCE_ID = "microservice";
-    private static final String SECURED_READ_SCOPE = "#oauth2.hasScope('READ')";
-    private static final String SECURED_WRITE_SCOPE = "#oauth2.hasScope('WRITE')";
-    private static final String SECURED_PATTERN = "/**";
-
-    @Override
-    public void configure(ResourceServerSecurityConfigurer resources) {
-        resources.resourceId(RESOURCE_ID);
-    }
-
-    @Override
-    public void configure(HttpSecurity http) throws Exception {
-        http.csrf().disable()
-                .sessionManagement().disable()
-                .authorizeRequests()
-//                 .antMatchers("/item/list").permitAll()
-                .and()
-                .requestMatchers()                
-                .antMatchers(SECURED_PATTERN).and().authorizeRequests()
-                .antMatchers(HttpMethod.POST, SECURED_PATTERN)
-                .access(SECURED_WRITE_SCOPE)
-                .anyRequest().access(SECURED_READ_SCOPE);
-    }
-}
-```
 ## How to run item service?
 
 ### Build Project
@@ -204,7 +139,7 @@ Now, run the JAR file by using the following command −
  
 Eureka Discovery-Service URL: `http://localhost:8761`
 
-After sucessfully run we can refresh Eureka Discovery-Service URL: `http://localhost:8761` will see `item-server` instance gate will be run on `http://localhost:8280` port
+After sucessfully run we can refresh Eureka Discovery-Service URL: `http://localhost:8761` will see `item-server` instance gate will be running on `8280` port
 
 ***Test HTTP GET Request on item-service -resource service***
 ```
