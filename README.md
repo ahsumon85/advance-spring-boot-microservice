@@ -54,7 +54,7 @@ Whenever we think of microservices and distributed applications, the first point
 
 To maintain security, the first necessary condition is to restrict direct microservice calls for outside callers. All calls should only go through the API Gateway. The API Gateway is mainly responsible for authentication and authorization of the API requests made by external callers. Also, this layer performs the routing of API requests that come from external clients to respective microservices. This allows the API Gateway to act as an entry point for all its respective microservices. So, we can say the API Gateway is mainly responsible for the security of microservices.
 
-## How to run eureka service?
+## How to run auth service?
 
 ### Build Project
 Now, you can create an executable JAR file, and run the Spring Boot application by using the Maven or Gradle commands shown below −
@@ -78,7 +78,7 @@ Run on terminal `java –jar <JARFILE> `
  
  `click right button on the project >Run As >Spring Boot App`
  
- Eureka Discovery-Service URL: `http://localhost:8761`
+Then will refresh Eureka Discovery-Service URL: `http://localhost:8761` and we will see auth instance running on `9191` port.
 
 ### Test Authorization Service
 ***Get Access Token***
