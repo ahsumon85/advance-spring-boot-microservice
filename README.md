@@ -16,6 +16,18 @@ The architecture is composed by five services:
 * JDK 1.8+
 
 ##
+# API-Gateway with Hystrix
+Let's start by configuring hystrix monitoring dashboard on API Gateway Service application to view hystrix stream.
+
+First, we need to add the `spring-cloud-starter-hystrix-dashboard` dependency:
+```
+<dependency>
+	<groupId>org.springframework.cloud</groupId>
+	<artifactId>spring-cloud-starter-hystrix-dashboard</artifactId>
+	<version>1.4.7.RELEASE</version>
+</dependency>
+```
+##
 # Eureka Service
 
 Eureka Server is an application that holds the information about all client-service applications. Every Micro service will register into the Eureka server and Eureka server knows all the client applications running on each port and IP address. Eureka Server is also known as Discovery Server.
