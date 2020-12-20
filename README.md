@@ -3,7 +3,7 @@
 # Overview
 The architecture is composed by five services:
 
-   * [`micro-api-getway`](https://github.com/habibsumoncse/secure-spring-boot-microservice#api-gateway-service): API Gateway created by **Zuul** that is internally uses Ribbon **Load Balancer**  and  also can monitor Hystrix stream from every API request by **Hystrix**
+   * [`micro-api-getway`](https://github.com/ahsumon85/advance-spring-boot-microservice#api-gateway-with-hystrix): API Gateway created by **Zuul** that is internally uses Ribbon **Load Balancer**  and  also can monitor Hystrix stream from every API request by **Hystrix**
    * [`micro-eureka-server`](https://github.com/habibsumoncse/secure-spring-boot-microservice#eureka-service): Service **Registry Server** created by Eureka with  **Load Balancer** for inter-service communication 
    * [`micro-auth-service`](https://github.com/habibsumoncse/secure-spring-boot-microservice#authorization-service): Simple REST service created with `Spring Boot, Spring Cloud Oauth2, Spring Data JPA, MySQL` to use as an **authorization service**
    * [`micro-item-service`](https://github.com/habibsumoncse/secure-spring-boot-microservice#item-service): Simple REST service created with `Spring Boot, Spring Data JPA, MySQL and swagger to test api` to use as a **resource service**
@@ -27,7 +27,8 @@ First, we need to add the `spring-cloud-starter-hystrix-dashboard` dependency:
 	<version>1.4.7.RELEASE</version>
 </dependency>
 ```
-* The main application class `ZuulApiGetWayRunner` to start Spring boot application.
+The main application class `ZuulApiGetWayRunner` to start Spring boot application.
+
 ```
 @SpringBootApplication
 @EnableZuulProxy
@@ -61,9 +62,36 @@ public class ZuulApiGetWayRunner {
 	}
 }
 ```
-* ***@EnableHystrixDashBoard*** – To give dashboard view of Hystrix stream.
-* ***@EnableCircuitBreaker*** – To enable Circuit breaker implementation.
+**@EnableHystrixDashBoard** – To give dashboard view of Hystrix stream.
+
+**@EnableCircuitBreaker** – To enable Circuit breaker implementation.
+
+**Zuul routes configuration** Open `application.properties` and add below entries-
+
+```
+#Set the Hystrix isolation policy to the thread pool
+zuul.ribbon-isolation-strategy=thread
+
+#each route uses a separate thread pool
+zuul.thread-pool.use-separate-thread-pools=true
+```
+
+#### Hystrix dashboard view
+
+* To **monitor via Hystrix dashboard**, open Hystrix dashboard at `http://localhost:8180/hystrix`
+
+![Screenshot from 2020-12-07 12-44-38](https://user-images.githubusercontent.com/31319842/101318202-1ee68c00-388a-11eb-8170-ca519491db1f.png)
+
+
+
+* Now view **hystrix stream** in dashboard – `http://localhost:8180/hystrix.stream`
+
+![Screenshot from 2020-12-07 12-04-26](https://user-images.githubusercontent.com/31319842/101317913-9c5dcc80-3889-11eb-8cc1-c757788dfbbd.png)
+
+
+
 ##
+
 # Eureka Service
 
 Eureka Server is an application that holds the information about all client-service applications. Every Micro service will register into the Eureka server and Eureka server knows all the client applications running on each port and IP address. Eureka Server is also known as Discovery Server.
