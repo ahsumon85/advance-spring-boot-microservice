@@ -1,4 +1,4 @@
-package com.ahasan.item.security;
+package com.ahasan.item.auth;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
