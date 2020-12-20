@@ -1,4 +1,4 @@
-## Spring Boot, Spring Cloud Oauth2, Spring Cloud Netflix Eureka, Spring CLoud Zuul, Hystrix monitoring dashboard,Swagger 2, Spring Data JPA, MySQL.
+## Spring Boot, Spring Cloud Oauth2, Eureka, Zuul, Hystrix Monitoring Dashboard, Swagger 2, JPA, MySQL
 
 # Overview
 The architecture is composed by five services:
@@ -89,9 +89,9 @@ Now, run the JAR file by using the following command −
 Run on terminal `java –jar <JARFILE> `
 
  Run on sts IDE
- 
+
  `click right button on the project >Run As >Spring Boot App`
- 
+
 Eureka Discovery-Service URL: `http://localhost:8761`
 
 ##
@@ -124,9 +124,9 @@ Now, run the JAR file by using the following command −
 Run on terminal `java –jar <JARFILE> `
 
  Run on sts IDE
- 
+
  `click right button on the project >Run As >Spring Boot App`
- 
+
 After sucessfully run we can refresh Eureka Discovery-Service URL: `http://localhost:8761` will see `item-server` instance gate will be running on `8280` port
 
 ### Test Authorization Service
@@ -185,7 +185,7 @@ Now, run the JAR file by using the following command −
  `java –jar <JARFILE> `
  Run on sts IDE
  `click right button on the project >Run As >Spring Boot App`
- 
+
 Eureka Discovery-Service URL: `http://localhost:8761`
 
 After sucessfully run we can refresh Eureka Discovery-Service URL: `http://localhost:8761` will see `item-server` instance gate will be running on `8280` port
@@ -225,7 +225,7 @@ Now, run the JAR file by using the following command −
  `java –jar <JARFILE> `
  Run on sts IDE
  `click right button on the project >Run As >Spring Boot App`
- 
+
 Eureka Discovery-Service URL: `http://localhost:8761`
 
 After sucessfully run we can refresh Eureka Discovery-Service URL: `http://localhost:8761` will see `sales-server` instance gate will be run on `http://localhost:8280` port
@@ -270,9 +270,9 @@ Now, run the JAR file by using the following command −
  `java –jar <JARFILE> `
 
  Run on sts IDE
- 
+
  `click right button on the project >Run As >Spring Boot App`
- 
+
 After sucessfully run we can refresh Eureka Discovery-Service URL: `http://localhost:8761` will see `zuul-server` on eureka dashboard. the gateway instance will be run on `http://localhost:8180` port
 
 ![Screenshot from 2020-11-15 11-21-33](https://user-images.githubusercontent.com/31319842/99894579-6af0d880-2caf-11eb-84aa-d41b16cfbd12.png)
