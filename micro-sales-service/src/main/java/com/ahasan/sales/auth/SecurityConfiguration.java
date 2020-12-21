@@ -1,4 +1,4 @@
-package com.ahasan.sales.security;
+package com.ahasan.sales.auth;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

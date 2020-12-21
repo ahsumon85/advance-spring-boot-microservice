@@ -15,7 +15,7 @@ The architecture is composed by five services:
 * MySQL server
 * JDK 1.8+
 
-##
+
 # API-Gateway with Hystrix
 Let's start by configuring hystrix monitoring dashboard on API Gateway Service application to view hystrix stream.
 
@@ -185,13 +185,116 @@ Now, add the Request Parameters as follows −
 
 ```
 
+
+
 # Item Service -resource service
 
 Now we will see `micro-item-service` as a resource service. The `micro-item-service` a REST API that lets you CRUD (Create, Read, Update, and Delete) products. It creates a default set of items when the application loads using an `ItemApplicationRunner` bean.
 
+## Setting Up Swagger 2 with a Item Service 
+
+To enable the Swagger2 in Spring Boot application, you need to add the following dependencies in our build configurations file.
+
+```
+<dependency>
+	<groupId>io.springfox</groupId>
+	<artifactId>springfox-swagger2</artifactId>
+	<version>2.9.2</version>
+</dependency>
+<dependency>
+	<groupId>io.springfox</groupId>
+	<artifactId>springfox-bean-validators</artifactId>
+	<version>2.9.2</version>
+</dependency>
+<dependency>
+	<groupId>io.springfox</groupId>
+	<artifactId>springfox-swagger-ui</artifactId>
+	<version>2.9.2</version>
+</dependency>
+```
+
+Now, add the `@EnableSwagger2` annotation in your main Spring Boot application. The `@EnableSwagger2` annotation is used to enable the `Swagger2` for your Spring Boot application. Here have two variable that has `clientId` and `clientSecret` value getting from `application.properties`  file
+
+The code for main Spring Boot application is shown below −
+
+```
+@Configuration
+@EnableSwagger2
+public class SwaggerConfig {
+	@Value("${security.oauth2.client.client-id}")
+	private String clientId;
+	
+	@Value("${security.oauth2.client.client-secret}")
+	private String clientSecret;
+	
+	public static final String securitySchemaOAuth2 = "oauth2schema";
+	public static final String authorizationScopeGlobal = "global";
+	public static final String authorizationScopeGlobalDesc = "accessEverything";
+}
+```
+
+**Swagger UI With an OAuth-Secured API**
+
+Next, create Docket Bean to configure Swagger2 for your Spring Boot application. We need to define the base package to configure REST API(s) for Swagger2.
+
+The Swagger UI provides a number of very useful features that we've covered well so far here. But we can't really use most of these if our API is secured and not accessible.
+
+Let's see how we can allow Swagger to access an OAuth-secured API using the Authorization Code grant type in this example.
+
+We'll configure Swagger to access our secured API using the *SecurityScheme* and *SecurityContext* support:
+
+```
+	@Bean
+	public Docket productApi() {
+		return new Docket(DocumentationType.SWAGGER_2).select()
+			.apis(RequestHandlerSelectors.basePackage("com.ahasan.sales.controller"))
+					.paths(PathSelectors.any()).build()
+					.securityContexts(Collections.singletonList(securityContext()))
+					.securitySchemes(Arrays.asList(securitySchema())).apiInfo(apiInfo());
+	}
+```
+
+After defining the *Docket* bean, its *select()* method returns an instance of *ApiSelectorBuilder*, which provides a way to control the endpoints exposed by Swagger.
+
+We can configure predicates for selecting *RequestHandler*s with the help of *RequestHandlerSelectors* and *PathSelectors*. Using *any()* for both will make documentation for our entire API available through Swagger.
+
+**Security Configuration**
+
+```
+private OAuth securitySchema() {
+		List<AuthorizationScope> authorizationScopeList = newArrayList();
+		authorizationScopeList.add(new AuthorizationScope("READ", "read all"));
+		authorizationScopeList.add(new AuthorizationScope("WRITE", "access all"));
+//		authorizationScopeList.add(new AuthorizationScope("TRUSTED", "trusted all"));
+		List<GrantType> grantTypes = newArrayList();
+		GrantType passwordCredentialsGrant = new ResourceOwnerPasswordCredentialsGrant("http://localhost:9191/auth-api/oauth/token");
+		grantTypes.add(passwordCredentialsGrant);
+		return new OAuth("oauth2", authorizationScopeList, grantTypes);
+	}
+
+	private SecurityContext securityContext() {
+		return SecurityContext.builder().securityReferences(defaultAuth()).build();
+	}
+
+	private List<SecurityReference> defaultAuth() {
+		final AuthorizationScope[] authorizationScopes = new AuthorizationScope[2];
+		authorizationScopes[0] = new AuthorizationScope("READ", "read all");
+		authorizationScopes[1] = new AuthorizationScope("WRITE", "write all");
+//		authorizationScopes[2] = new AuthorizationScope("TRUSTED", "trust all");
+		return Collections.singletonList(new SecurityReference("oauth2", authorizationScopes));
+	}
+
+	@Bean
+	public SecurityConfiguration security() {
+		return new SecurityConfiguration(clientId, clientSecret, "", "", "Bearer access token", ApiKeyVehicle.HEADER,
+				HttpHeaders.AUTHORIZATION, "");
+	}
+
+```
 
 
-## Setting Up Swagger 2 with a Spring REST API
+
+
 
 ## How to run item service?
 

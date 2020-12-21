@@ -50,27 +50,16 @@ public class SwaggerConfig {
 	 */
 
 	@Bean
-	public Docket productApi() {
-
+	public Docket salesApi() {
 		return new Docket(DocumentationType.SWAGGER_2).select()
-				.apis(RequestHandlerSelectors.basePackage("com.ahasan.sales.controller")).paths(PathSelectors.any()).build()
-				.securityContexts(Collections.singletonList(securityContext()))
-				.securitySchemes(Arrays.asList(securitySchema()/* , apiKey(), apiCookieKey() */)).apiInfo(apiInfo());
-
+					.apis(RequestHandlerSelectors.basePackage("com.ahasan.sales.controller"))
+					.paths(PathSelectors.any()).build()
+					.securityContexts(Collections.singletonList(securityContext()))
+					.securitySchemes(Arrays.asList(securitySchema())).apiInfo(apiInfo());
 	}
 
-	@Bean
-	public SecurityScheme apiKey() {
-		return new ApiKey(HttpHeaders.AUTHORIZATION, "apiKey", "header");
-	}
-
-	@Bean
-	public SecurityScheme apiCookieKey() {
-		return new ApiKey(HttpHeaders.COOKIE, "apiKey", "cookie");
-	}
 
 	private OAuth securitySchema() {
-
 		List<AuthorizationScope> authorizationScopeList = newArrayList();
 		authorizationScopeList.add(new AuthorizationScope("READ", "read all"));
 		authorizationScopeList.add(new AuthorizationScope("WRITE", "access all"));
@@ -92,7 +81,6 @@ public class SwaggerConfig {
 		authorizationScopes[0] = new AuthorizationScope("READ", "read all");
 		authorizationScopes[1] = new AuthorizationScope("WRITE", "write all");
 //		authorizationScopes[2] = new AuthorizationScope("TRUSTED", "trust all");
-
 		return Collections.singletonList(new SecurityReference("oauth2", authorizationScopes));
 	}
 
@@ -108,9 +96,9 @@ public class SwaggerConfig {
 	 */
 	private ApiInfo apiInfo() {
 		return new ApiInfoBuilder().title("SIMPLE MICROSERVICE").description("Author by Ahasan Habib")
-				.termsOfServiceUrl("https://github.com/habibsumoncse")
+				.termsOfServiceUrl("https://github.com/ahsumon85")
 				.contact(new Contact("Ahasan Habib", "https://www.linkedin.com/in/habibsumon/", "habibsumoncse@gmail.com"))
-				.license("Open Source").licenseUrl("https://github.com/habibsumoncse/advance-spring-boot-microservice").version("1.0.0").build();
+				.license("Open Source").licenseUrl("https://github.com/ahsumon85/advance-spring-boot-microservice").version("1.0.0").build();
 
 	}
 	

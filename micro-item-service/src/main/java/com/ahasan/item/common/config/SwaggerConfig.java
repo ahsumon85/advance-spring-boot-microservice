@@ -50,23 +50,14 @@ public class SwaggerConfig {
 	 */
 
 	@Bean
-	public Docket productApi() {
+	public Docket itemsApi() {
 
 		return new Docket(DocumentationType.SWAGGER_2).select()
-				.apis(RequestHandlerSelectors.basePackage("com.ahasan.item.controller")).paths(PathSelectors.any()).build()
-				.securityContexts(Collections.singletonList(securityContext()))
-				.securitySchemes(Arrays.asList(securitySchema()/* , apiKey(), apiCookieKey() */)).apiInfo(apiInfo());
+					.apis(RequestHandlerSelectors.basePackage("com.ahasan.item.controller"))
+					.paths(PathSelectors.any()).build()
+					.securityContexts(Collections.singletonList(securityContext()))
+					.securitySchemes(Arrays.asList(securitySchema())).apiInfo(apiInfo());
 
-	}
-
-	@Bean
-	public SecurityScheme apiKey() {
-		return new ApiKey(HttpHeaders.AUTHORIZATION, "apiKey", "header");
-	}
-
-	@Bean
-	public SecurityScheme apiCookieKey() {
-		return new ApiKey(HttpHeaders.COOKIE, "apiKey", "cookie");
 	}
 
 	private OAuth securitySchema() {
