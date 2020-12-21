@@ -4,8 +4,8 @@
 The architecture is composed by five services:
 
    * [`micro-api-getway`](https://github.com/ahsumon85/advance-spring-boot-microservice#api-gateway-with-hystrix): API Gateway created by **Zuul** that is internally uses Ribbon **Load Balancer**  and  also can monitor Hystrix stream from every API request by **Hystrix**
-   * [`micro-eureka-server`](https://github.com/habibsumoncse/secure-spring-boot-microservice#eureka-service): Service **Registry Server** created by Eureka with  **Load Balancer** for inter-service communication 
-   * [`micro-auth-service`](https://github.com/habibsumoncse/secure-spring-boot-microservice#authorization-service): Simple REST service created with `Spring Boot, Spring Cloud Oauth2, Spring Data JPA, MySQL` to use as an **authorization service**
+   * [`micro-eureka-server`](https://github.com/ahsumon85/advance-spring-boot-microservice#eureka-service): Service **Registry Server** created by Eureka with  **Load Balancer** for inter-service communication 
+   * [`micro-auth-service`](https://github.com/ahsumon85/advance-spring-boot-microservice#authorization-service): Simple REST service created with `Spring Boot, Spring Cloud Oauth2, Spring Data JPA, MySQL` to use as an **authorization service**
    * [`micro-item-service`](https://github.com/habibsumoncse/secure-spring-boot-microservice#item-service): Simple REST service created with `Spring Boot, Spring Data JPA, MySQL and swagger to test api` to use as a **resource service**
    * [`micro-sales-service`](https://github.com/habibsumoncse/secure-spring-boot-microservice#sales-service): Simple REST service created with `Spring Boot, Spring Data JPA, MySQL and swagger to test api` to use as a **resource service**
 
@@ -90,8 +90,6 @@ zuul.thread-pool.use-separate-thread-pools=true
 
 
 
-##
-
 # Eureka Service
 
 Eureka Server is an application that holds the information about all client-service applications. Every Micro service will register into the Eureka server and Eureka server knows all the client applications running on each port and IP address. Eureka Server is also known as Discovery Server.
@@ -122,14 +120,9 @@ Run on terminal `java –jar <JARFILE> `
 
 Eureka Discovery-Service URL: `http://localhost:8761`
 
-##
 # Authorization Service
 
-![1](https://user-images.githubusercontent.com/31319842/99893591-9d003b80-2cab-11eb-9f06-1d5a785c775b.png)
-
-Whenever we think of microservices and distributed applications, the first point that comes to mind is security. Obviously, in distributed architectures, it is really difficult to manage security as we do not have much control over the application. So in this situation, we always need to have a central entry point to this distributed architecture. This is the reason why, in microservices, we have a separate and dedicated layer for all these purposes. This layer is known as the API Gateway. It is an entry point for a microservice's architecture.
-
-To maintain security, the first necessary condition is to restrict direct microservice calls for outside callers. All calls should only go through the API Gateway. The API Gateway is mainly responsible for authentication and authorization of the API requests made by external callers. Also, this layer performs the routing of API requests that come from external clients to respective microservices. This allows the API Gateway to act as an entry point for all its respective microservices. So, we can say the API Gateway is mainly responsible for the security of microservices.
+An **Authorization Server** issues tokens to client applications on behalf of a **Resource** Owner for use in authenticating subsequent API calls to the **Resource Server**. The **Resource Server** hosts the protected **resources**, and can accept or respond to protected **resource** requests using access tokens.
 
 ## How to run auth service?
 
@@ -164,14 +157,14 @@ Let’s get the access token for `admin` by passing his credentials as part of h
 
 Now hit the POST method URL via POSTMAN to get the OAUTH2 token.
 
-***http://localhost:8080/oauth/token***
+**`http://localhost:8180/oauth/token`**
 
 Now, add the Request Headers as follows −
 
-*`Authorization` − Basic Auth with your Client Id and Client secret.
+* `Authorization` − Basic Auth with your Client Id and Client secret.
 
-*`Content Type` − application/x-www-form-urlencoded
-![1](https://user-images.githubusercontent.com/31319842/95816138-2e40d180-0d40-11eb-99c7-403cdf7ef070.png)
+* `Content Type` − application/x-www-form-urlencoded
+  ![1](https://user-images.githubusercontent.com/31319842/95816138-2e40d180-0d40-11eb-99c7-403cdf7ef070.png)
 
 Now, add the Request Parameters as follows −
 
@@ -189,12 +182,16 @@ Now, add the Request Parameters as follows −
   "expires_in":999999,
   "scope":"read write"
 }
+
 ```
 
-##
 # Item Service -resource service
 
 Now we will see `micro-item-service` as a resource service. The `micro-item-service` a REST API that lets you CRUD (Create, Read, Update, and Delete) products. It creates a default set of items when the application loads using an `ItemApplicationRunner` bean.
+
+
+
+## Setting Up Swagger 2 with a Spring REST API
 
 ## How to run item service?
 
