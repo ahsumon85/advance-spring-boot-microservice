@@ -38,13 +38,7 @@ public class SalesController {
 		SalesDTO list = salesService.findBySalesId(id);
 		return new ResponseEntity<SalesDTO>(list, HttpStatus.OK);
 	}
-
-	@GetMapping(value = "/find/name/by-id")
-	public ResponseEntity<SalesDTO> getSalesNameById(@RequestParam Long id) {
-		SalesDTO list = salesService.findBySalesId(id);
-		return new ResponseEntity<>(list, HttpStatus.OK);
-	}
-
+	
 	@PostMapping(value = { "/add", "/update" })
 	public ResponseEntity<BaseResponse> createOrUpdateSales(@RequestBody SalesDTO userDTO) {
 		BaseResponse response = salesService.createOrUpdateSales(userDTO);

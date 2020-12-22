@@ -304,7 +304,39 @@ private List<SecurityReference> defaultAuth() {
 	}
 ```
 
+### Web Security paths configure 
 
+Ignoring security for path related to Swagger functionalities:
+
+````
+@Configuration
+@EnableWebSecurity
+public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
+
+	@Override
+	public void configure(WebSecurity web) throws Exception {
+		web.ignoring()
+			.antMatchers("/v2/api-docs",
+						"/swagger-resources/**",
+						"/swagger-ui.html",
+						"/webjars/**",
+						"/swagger/**");
+	}
+	public void addCorsMappings(CorsRegistry registry) {
+		registry.addMapping("/**");
+	}
+}
+````
+
+
+
+**Now we can test it in our browser by visiting:**
+
+`http://localhost:8180/sales-api/swagger-ui.html`
+
+![Screenshot from 2020-12-07 15-22-21](https://user-images.githubusercontent.com/31319842/101333238-93c4c080-38a0-11eb-8f06-02c29558a31b.png)
+
+<img src="https://user-images.githubusercontent.com/31319842/101333236-932c2a00-38a0-11eb-8bdb-bde71fa98a7f.png" alt="Screenshot from 2020-12-07 15-22-53" style="height:%" />
 
 
 
