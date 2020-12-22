@@ -252,6 +252,10 @@ We'll configure Swagger to access our secured API using the *SecurityScheme* and
 					.securityContexts(Collections.singletonList(securityContext()))
 					.securitySchemes(Arrays.asList(securitySchema())).apiInfo(apiInfo());
 	}
+	
+	private SecurityContext securityContext() {
+		return SecurityContext.builder().securityReferences(defaultAuth()).build();
+	}
 ```
 
 After defining the *Docket* bean, its *select()* method returns an instance of *ApiSelectorBuilder*, which provides a way to control the endpoints exposed by Swagger.
@@ -260,6 +264,19 @@ We can configure predicates for selecting *RequestHandler*s with the help of *Re
 
 **Security Configuration**
 
+We'll define a *SecurityConfiguration* bean in our Swagger configuration and set some defaults:
+
+```
+@Bean
+public SecurityConfiguration security() {
+	return new SecurityConfiguration(clientId, clientSecret, "", "", "Bearer access 		token", ApiKeyVehicle.HEADER, HttpHeaders.AUTHORIZATION, "");
+}
+```
+
+**SecurityScheme**
+
+Next, we'll define our *SecurityScheme*; this is used to describe how our API is secured (Basic Authentication, OAuth2, …).
+
 ```
 private OAuth securitySchema() {
 		List<AuthorizationScope> authorizationScopeList = newArrayList();
@@ -267,29 +284,24 @@ private OAuth securitySchema() {
 		authorizationScopeList.add(new AuthorizationScope("WRITE", "access all"));
 //		authorizationScopeList.add(new AuthorizationScope("TRUSTED", "trusted all"));
 		List<GrantType> grantTypes = newArrayList();
-		GrantType passwordCredentialsGrant = new ResourceOwnerPasswordCredentialsGrant("http://localhost:9191/auth-api/oauth/token");
+		GrantType passwordCredentialsGrant = new 		  ResourceOwnerPasswordCredentialsGrant("http://localhost:9191/auth-api/oauth/token");
 		grantTypes.add(passwordCredentialsGrant);
 		return new OAuth("oauth2", authorizationScopeList, grantTypes);
 	}
+```
 
-	private SecurityContext securityContext() {
-		return SecurityContext.builder().securityReferences(defaultAuth()).build();
-	}
+Note that we used the Authorization Code grant type, for which we need to provide a token endpoint and the authorization URL of our OAuth2 Authorization Server.
 
-	private List<SecurityReference> defaultAuth() {
+And here are the scopes we need to have defined:
+
+```
+private List<SecurityReference> defaultAuth() {
 		final AuthorizationScope[] authorizationScopes = new AuthorizationScope[2];
 		authorizationScopes[0] = new AuthorizationScope("READ", "read all");
 		authorizationScopes[1] = new AuthorizationScope("WRITE", "write all");
 //		authorizationScopes[2] = new AuthorizationScope("TRUSTED", "trust all");
 		return Collections.singletonList(new SecurityReference("oauth2", authorizationScopes));
 	}
-
-	@Bean
-	public SecurityConfiguration security() {
-		return new SecurityConfiguration(clientId, clientSecret, "", "", "Bearer access token", ApiKeyVehicle.HEADER,
-				HttpHeaders.AUTHORIZATION, "");
-	}
-
 ```
 
 

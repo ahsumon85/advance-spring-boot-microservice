@@ -53,11 +53,13 @@ public class SwaggerConfig {
 	public Docket itemsApi() {
 
 		return new Docket(DocumentationType.SWAGGER_2).select()
-					.apis(RequestHandlerSelectors.basePackage("com.ahasan.item.controller"))
-					.paths(PathSelectors.any()).build()
-					.securityContexts(Collections.singletonList(securityContext()))
-					.securitySchemes(Arrays.asList(securitySchema())).apiInfo(apiInfo());
-
+				.apis(RequestHandlerSelectors.basePackage("com.ahasan.item.controller")).paths(PathSelectors.any())
+				.build().securityContexts(Collections.singletonList(securityContext()))
+				.securitySchemes(Arrays.asList(securitySchema())).apiInfo(apiInfo());
+	}
+	
+	private SecurityContext securityContext() {
+		return SecurityContext.builder().securityReferences(defaultAuth()).build();
 	}
 
 	private OAuth securitySchema() {
@@ -67,23 +69,20 @@ public class SwaggerConfig {
 		authorizationScopeList.add(new AuthorizationScope("WRITE", "access all"));
 //		authorizationScopeList.add(new AuthorizationScope("TRUSTED", "trusted all"));
 		List<GrantType> grantTypes = newArrayList();
-		GrantType passwordCredentialsGrant = new ResourceOwnerPasswordCredentialsGrant("http://localhost:9191/auth-api/oauth/token");
+		GrantType passwordCredentialsGrant = 
+				new ResourceOwnerPasswordCredentialsGrant("http://localhost:9191/auth-api/oauth/token");
 		grantTypes.add(passwordCredentialsGrant);
 
 		return new OAuth("oauth2", authorizationScopeList, grantTypes);
 	}
 
-	private SecurityContext securityContext() {
-		return SecurityContext.builder().securityReferences(defaultAuth()).build();
-	}
+
 
 	private List<SecurityReference> defaultAuth() {
-
 		final AuthorizationScope[] authorizationScopes = new AuthorizationScope[2];
 		authorizationScopes[0] = new AuthorizationScope("READ", "read all");
 		authorizationScopes[1] = new AuthorizationScope("WRITE", "write all");
 //		authorizationScopes[2] = new AuthorizationScope("TRUSTED", "trust all");
-
 		return Collections.singletonList(new SecurityReference("oauth2", authorizationScopes));
 	}
 
@@ -100,11 +99,11 @@ public class SwaggerConfig {
 	private ApiInfo apiInfo() {
 		return new ApiInfoBuilder().title("SIMPLE MICROSERVICE").description("Author by Ahasan Habib")
 				.termsOfServiceUrl("https://github.com/habibsumoncse")
-				.contact(new Contact("Ahasan Habib", "https://www.linkedin.com/in/habibsumon/", "habibsumoncse@gmail.com"))
-				.license("Open Source").licenseUrl("https://github.com/habibsumoncse/advance-spring-boot-microservice").version("1.0.0").build();
+				.contact(new Contact("Ahasan Habib", "https://www.linkedin.com/in/habibsumon/",
+						"habibsumoncse@gmail.com"))
+				.license("Open Source").licenseUrl("https://github.com/habibsumoncse/advance-spring-boot-microservice")
+				.version("1.0.0").build();
 
 	}
-	
-
 
 }
