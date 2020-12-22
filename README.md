@@ -120,6 +120,8 @@ Run on terminal `java –jar <JARFILE> `
 
 Eureka Discovery-Service URL: `http://localhost:8761`
 
+
+
 # Authorization Service
 
 An **Authorization Server** issues tokens to client applications on behalf of a **Resource** Owner for use in authenticating subsequent API calls to the **Resource Server**. The **Resource Server** hosts the protected **resources**, and can accept or respond to protected **resource** requests using access tokens.
@@ -182,7 +184,6 @@ Now, add the Request Parameters as follows −
   "expires_in":999999,
   "scope":"read write"
 }
-
 ```
 
 
@@ -245,7 +246,7 @@ We'll configure Swagger to access our secured API using the *SecurityScheme* and
 
 ```
 	@Bean
-	public Docket productApi() {
+	public Docket itemsApi() {
 		return new Docket(DocumentationType.SWAGGER_2).select()
 			.apis(RequestHandlerSelectors.basePackage("com.ahasan.sales.controller"))
 					.paths(PathSelectors.any()).build()
@@ -332,13 +333,9 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
 **Now we can test it in our browser by visiting:**
 
-`http://localhost:8180/sales-api/swagger-ui.html`
+![Screenshot from 2020-12-07 15-41-54](https://user-images.githubusercontent.com/31319842/101335171-09319080-38a3-11eb-99d2-45972effff7b.png)
 
-![Screenshot from 2020-12-07 15-22-21](https://user-images.githubusercontent.com/31319842/101333238-93c4c080-38a0-11eb-8f06-02c29558a31b.png)
-
-<img src="https://user-images.githubusercontent.com/31319842/101333236-932c2a00-38a0-11eb-8bdb-bde71fa98a7f.png" alt="Screenshot from 2020-12-07 15-22-53" style="height:%" />
-
-
+![Screenshot from 2020-12-07 15-42-08](https://user-images.githubusercontent.com/31319842/101335180-0afb5400-38a3-11eb-9167-4b9a64a9c491.png)
 
 ## How to run item service?
 
@@ -379,6 +376,151 @@ On this repository we will see `secure-microservice-architecture.postman_collect
 ##
 # Sales Service -resource service
 Now we will see `micro-sales-service` as a resource service. The `micro-sales-service` a REST API that lets you CRUD (Create, Read, Update, and Delete) products. It creates a default set of items when the application loads using an `SalesApplicationRunner` bean.
+
+## Setting Up Swagger 2 with a Item Service 
+
+To enable the Swagger2 in Spring Boot application, you need to add the following dependencies in our build configurations file.
+
+```
+<dependency>
+	<groupId>io.springfox</groupId>
+	<artifactId>springfox-swagger2</artifactId>
+	<version>2.9.2</version>
+</dependency>
+<dependency>
+	<groupId>io.springfox</groupId>
+	<artifactId>springfox-bean-validators</artifactId>
+	<version>2.9.2</version>
+</dependency>
+<dependency>
+	<groupId>io.springfox</groupId>
+	<artifactId>springfox-swagger-ui</artifactId>
+	<version>2.9.2</version>
+</dependency>
+```
+
+Now, add the `@EnableSwagger2` annotation in your main Spring Boot application. The `@EnableSwagger2` annotation is used to enable the `Swagger2` for your Spring Boot application. Here have two variable that has `clientId` and `clientSecret` value getting from `application.properties`  file
+
+The code for main Spring Boot application is shown below −
+
+```
+@Configuration
+@EnableSwagger2
+public class SwaggerConfig {
+	@Value("${security.oauth2.client.client-id}")
+	private String clientId;
+	
+	@Value("${security.oauth2.client.client-secret}")
+	private String clientSecret;
+	
+	public static final String securitySchemaOAuth2 = "oauth2schema";
+	public static final String authorizationScopeGlobal = "global";
+	public static final String authorizationScopeGlobalDesc = "accessEverything";
+}
+```
+
+**Swagger UI With an OAuth-Secured API**
+
+Next, create Docket Bean to configure Swagger2 for your Spring Boot application. We need to define the base package to configure REST API(s) for Swagger2.
+
+The Swagger UI provides a number of very useful features that we've covered well so far here. But we can't really use most of these if our API is secured and not accessible.
+
+Let's see how we can allow Swagger to access an OAuth-secured API using the Authorization Code grant type in this example.
+
+We'll configure Swagger to access our secured API using the *SecurityScheme* and *SecurityContext* support:
+
+```
+	@Bean
+	public Docket salesApi() {
+		return new Docket(DocumentationType.SWAGGER_2).select()
+			.apis(RequestHandlerSelectors.basePackage("com.ahasan.sales.controller"))
+					.paths(PathSelectors.any()).build()
+					.securityContexts(Collections.singletonList(securityContext()))
+					.securitySchemes(Arrays.asList(securitySchema())).apiInfo(apiInfo());
+	}
+	
+	private SecurityContext securityContext() {
+		return SecurityContext.builder().securityReferences(defaultAuth()).build();
+	}
+```
+
+After defining the *Docket* bean, its *select()* method returns an instance of *ApiSelectorBuilder*, which provides a way to control the endpoints exposed by Swagger.
+
+We can configure predicates for selecting *RequestHandler*s with the help of *RequestHandlerSelectors* and *PathSelectors*. Using *any()* for both will make documentation for our entire API available through Swagger.
+
+**Security Configuration**
+
+We'll define a *SecurityConfiguration* bean in our Swagger configuration and set some defaults:
+
+```
+@Bean
+public SecurityConfiguration security() {
+	return new SecurityConfiguration(clientId, clientSecret, "", "", "Bearer access 		token", ApiKeyVehicle.HEADER, HttpHeaders.AUTHORIZATION, "");
+}
+```
+
+**SecurityScheme**
+
+Next, we'll define our *SecurityScheme*; this is used to describe how our API is secured (Basic Authentication, OAuth2, …).
+
+```
+private OAuth securitySchema() {
+		List<AuthorizationScope> authorizationScopeList = newArrayList();
+		authorizationScopeList.add(new AuthorizationScope("READ", "read all"));
+		authorizationScopeList.add(new AuthorizationScope("WRITE", "access all"));
+//		authorizationScopeList.add(new AuthorizationScope("TRUSTED", "trusted all"));
+		List<GrantType> grantTypes = newArrayList();
+		GrantType passwordCredentialsGrant = new 		  ResourceOwnerPasswordCredentialsGrant("http://localhost:9191/auth-api/oauth/token");
+		grantTypes.add(passwordCredentialsGrant);
+		return new OAuth("oauth2", authorizationScopeList, grantTypes);
+	}
+```
+
+Note that we used the Authorization Code grant type, for which we need to provide a token endpoint and the authorization URL of our OAuth2 Authorization Server.
+
+And here are the scopes we need to have defined:
+
+```
+private List<SecurityReference> defaultAuth() {
+		final AuthorizationScope[] authorizationScopes = new AuthorizationScope[2];
+		authorizationScopes[0] = new AuthorizationScope("READ", "read all");
+		authorizationScopes[1] = new AuthorizationScope("WRITE", "write all");
+//		authorizationScopes[2] = new AuthorizationScope("TRUSTED", "trust all");
+		return Collections.singletonList(new SecurityReference("oauth2", authorizationScopes));
+	}
+```
+
+### Web Security paths configure 
+
+Ignoring security for path related to Swagger functionalities:
+
+````
+@Configuration
+@EnableWebSecurity
+public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
+
+	@Override
+	public void configure(WebSecurity web) throws Exception {
+		web.ignoring()
+			.antMatchers("/v2/api-docs",
+						"/swagger-resources/**",
+						"/swagger-ui.html",
+						"/webjars/**",
+						"/swagger/**");
+	}
+	public void addCorsMappings(CorsRegistry registry) {
+		registry.addMapping("/**");
+	}
+}
+````
+
+**Now we can test it in our browser by visiting:**
+
+`http://localhost:8180/sales-api/swagger-ui.html`
+
+![Screenshot from 2020-12-07 15-22-21](https://user-images.githubusercontent.com/31319842/101333238-93c4c080-38a0-11eb-8f06-02c29558a31b.png)
+
+<img src="https://user-images.githubusercontent.com/31319842/101333236-932c2a00-38a0-11eb-8bdb-bde71fa98a7f.png" alt="Screenshot from 2020-12-07 15-22-53" style="height:%" />
 
 ## How to run sales service?
 
