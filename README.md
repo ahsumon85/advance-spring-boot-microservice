@@ -6,8 +6,8 @@ The architecture is composed by five services:
    * [`micro-api-getway`](https://github.com/ahsumon85/advance-spring-boot-microservice#api-gateway-with-hystrix): API Gateway created by **Zuul** that is internally uses Ribbon **Load Balancer**  and  also can monitor Hystrix stream from every API request by **Hystrix**
    * [`micro-eureka-server`](https://github.com/ahsumon85/advance-spring-boot-microservice#eureka-service): Service **Registry Server** created by Eureka with  **Load Balancer** for inter-service communication 
    * [`micro-auth-service`](https://github.com/ahsumon85/advance-spring-boot-microservice#authorization-service): Simple REST service created with `Spring Boot, Spring Cloud Oauth2, Spring Data JPA, MySQL` to use as an **authorization service**
-   * [`micro-item-service`](https://github.com/habibsumoncse/secure-spring-boot-microservice#item-service): Simple REST service created with `Spring Boot, Spring Data JPA, MySQL and swagger to test api` to use as a **resource service**
-   * [`micro-sales-service`](https://github.com/habibsumoncse/secure-spring-boot-microservice#sales-service): Simple REST service created with `Spring Boot, Spring Data JPA, MySQL and swagger to test api` to use as a **resource service**
+   * [`micro-item-service`](https://github.com/ahsumon85/advance-spring-boot-microservice#item-service--resource-service): Simple REST service created with `Spring Boot, Spring Data JPA, MySQL and swagger to test api` to use as a **resource service**
+   * [`micro-sales-service`](https://github.com/ahsumon85/advance-spring-boot-microservice#sales-service--resource-service): Simple REST service created with `Spring Boot, Spring Data JPA, MySQL and swagger to test api` to use as a **resource service**
 
 ### tools you will need
 * Maven 3.0+ is your build tool
