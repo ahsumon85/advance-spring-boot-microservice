@@ -16,7 +16,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "10f0c3da-8426-4b97-a1c4-85c86c1e78c4",
+									"value": "4d7cdd91-3a5b-4fcb-9775-516dcd074d4f",
 									"type": "string"
 								}
 							]
@@ -47,13 +47,25 @@
 				},
 				{
 					"name": "find item list",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "5360b344-7ad2-4c47-a2bb-82aa8e55d359",
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
 					"request": {
 						"auth": {
 							"type": "bearer",
 							"bearer": [
 								{
 									"key": "token",
-									"value": "ec5e9f2f-b154-4326-9564-0d281a06a194",
+									"value": "4d7cdd91-3a5b-4fcb-9775-516dcd074d4f",
 									"type": "string"
 								}
 							]
@@ -154,13 +166,25 @@
 			"item": [
 				{
 					"name": "Find Sales List",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "88042d82-d5bf-4a47-94e7-21bd322a8536",
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
 					"request": {
 						"auth": {
 							"type": "bearer",
 							"bearer": [
 								{
 									"key": "token",
-									"value": "10f0c3da-8426-4b97-a1c4-85c86c1e78c4",
+									"value": "4d7cdd91-3a5b-4fcb-9775-516dcd074d4f",
 									"type": "string"
 								}
 							]
