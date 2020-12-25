@@ -613,6 +613,46 @@ Tested with
 - Java 8 or Java 11
 - Maven
 
-## Create Dockerfile on  all project
+## Create Dockerfile for all services
 
-![Screenshot from 2020-12-07 16-55-09](https://user-images.githubusercontent.com/31319842/101343056-a2fe3b00-38ad-11eb-8ace-ebd63f625e1d.png) ![Screenshot from 2020-12-07 16-55-01](https://user-images.githubusercontent.com/31319842/101343063-a4c7fe80-38ad-11eb-999d-430b59bf8fd5.png) ![Screenshot from 2020-12-07 16-54-51](https://user-images.githubusercontent.com/31319842/101343073-a5f92b80-38ad-11eb-9e4e-727f94d6f835.png) ![Screenshot from 2020-12-07 16-54-34](https://user-images.githubusercontent.com/31319842/101343075-a691c200-38ad-11eb-9d30-c8a83316f7c8.png)![Screenshot from 2020-12-07 16-54-21](https://user-images.githubusercontent.com/31319842/101343079-a7c2ef00-38ad-11eb-94b2-f4459a8f28ff.png)
+**Next, we containerize this application by adding a `Dockerfile`:** 
+
+
+![Screenshot from 2020-12-07 16-55-09](https://user-images.githubusercontent.com/31319842/101343056-a2fe3b00-38ad-11eb-8ace-ebd63f625e1d.png) ![Screenshot from 2020-12-07 16-55-01](https://user-images.githubusercontent.com/31319842/101343063-a4c7fe80-38ad-11eb-999d-430b59bf8fd5.png) ![Screenshot from 2020-12-07 16-54-51](https://user-images.githubusercontent.com/31319842/101343073-a5f92b80-38ad-11eb-9e4e-727f94d6f835.png)
+
+
+![Screenshot from 2020-12-07 16-54-34](https://user-images.githubusercontent.com/31319842/101343075-a691c200-38ad-11eb-9d30-c8a83316f7c8.png)![Screenshot from 2020-12-07 16-54-21](https://user-images.githubusercontent.com/31319842/101343079-a7c2ef00-38ad-11eb-94b2-f4459a8f28ff.png)
+
+
+
+See the `Dockerfile` at the root of the project? We only need this `Dockerfile` text file to dockerize the Spring Boot application.
+
+##  Compile services
+
+**Done, create  .jar with Maven.**
+
+```
+$ cd advance-spring-boot-microservice
+$ mvn clean install
+```
+
+**Run the Spring Boot using terminal **
+
+```
+$ java -jar micro-eureka-service/target/micro-eureka-service-0.0.1-SNAPSHOT.jar 
+$ java -jar micro-auth-service/target/micro-auth-service-0.0.1-SNAPSHOT.jar 
+$ java -jar micro-item-service/target/micro-item-service-0.0.1-SNAPSHOT.jar
+$ java -jar micro-sales-service/target/micro-sales-service-0.0.1-SNAPSHOT.jar
+$ java -jar micro-gateway-service/target/micro-gateway-service-0.0.1-SNAPSHOT.jar
+```
+
+## Docker File
+
+A `Dockerfile` is a text file, contains all the commands to assemble the docker image. Review the commands in the `Dockerfile`:
+
+It creates a docker image base on `openjdk:8` and download `jdk` from Docker Hub This base image `openjdk:8` is just an example, we can find more base images from the official [Docker Hub](https://hub.docker.com/r/adoptopenjdk/openjdk11)
+
+```
+FROM openjdk:8
+```
+
