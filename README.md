@@ -13,7 +13,7 @@ The architecture is composed by five services:
 
    * [`micro-sales-service`](https://github.com/ahsumon85/advance-spring-boot-microservice#sales-service--resource-service): Simple REST service created with `Spring Boot, Spring Data JPA, MySQL and swagger to test api` to use as a **resource service**
 
-* [`docker-deployment`](https://github.com/ahsumon85/advance-spring-boot-microservice#docker-deployment):Containerize deployment; Microservice docker deployment using docker, docker-compose
+* [`docker-deployment`](https://github.com/ahsumon85/advance-spring-boot-microservice#docker-deployment): Containerize deployment; Microservice docker deployment using docker, docker-compose
 
 ### tools you will need
 * Maven 3.0+ is your build tool
@@ -656,9 +656,18 @@ It creates a docker image base on `openjdk:8` and download `jdk` from Docker Hub
 FROM openjdk:8
 ```
 
-A volume is a persistent data stored in
+A volume is a persistent data stored it used to stored log file into the local directory in the define location 
 
 ```
 VOLUME /app/log
 ```
 
+This tells Docker to copy files from the local file-system to a specific folder inside the build image. Here, we copy our `.jar` file to the build image inside `target/X.X.0.1.jar`
+
+The `ADD` command requires a `source` and a `destination`.
+
+If `source` is a file, it is simply copied to the `destination` directory.
+
+```
+ADD target/X.X.0.1.jar drug-prod-ms-rs-0.0.1-SNAPSHOT.jar
+```
