@@ -63,7 +63,6 @@ public class SwaggerConfig {
 	}
 
 	private OAuth securitySchema() {
-
 		List<AuthorizationScope> authorizationScopeList = newArrayList();
 		authorizationScopeList.add(new AuthorizationScope("READ", "read all"));
 		authorizationScopeList.add(new AuthorizationScope("WRITE", "access all"));
@@ -72,11 +71,8 @@ public class SwaggerConfig {
 		GrantType passwordCredentialsGrant = 
 				new ResourceOwnerPasswordCredentialsGrant("http://localhost:9191/auth-api/oauth/token");
 		grantTypes.add(passwordCredentialsGrant);
-
 		return new OAuth("oauth2", authorizationScopeList, grantTypes);
 	}
-
-
 
 	private List<SecurityReference> defaultAuth() {
 		final AuthorizationScope[] authorizationScopes = new AuthorizationScope[2];

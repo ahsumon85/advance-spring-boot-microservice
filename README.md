@@ -4,10 +4,16 @@
 The architecture is composed by five services:
 
    * [`micro-api-getway`](https://github.com/ahsumon85/advance-spring-boot-microservice#api-gateway-service): API Gateway created by **Zuul** that is internally uses Ribbon **Load Balancer**  and  also can monitor Hystrix stream from every API request by **Hystrix**
+
    * [`micro-eureka-server`](https://github.com/ahsumon85/advance-spring-boot-microservice#eureka-service): Service **Registry Server** created by Eureka with  **Load Balancer** for inter-service communication 
+
    * [`micro-auth-service`](https://github.com/ahsumon85/advance-spring-boot-microservice#authorization-service): Simple REST service created with `Spring Boot, Spring Cloud Oauth2, Spring Data JPA, MySQL` to use as an **authorization service**
+
    * [`micro-item-service`](https://github.com/ahsumon85/advance-spring-boot-microservice#item-service--resource-service): Simple REST service created with `Spring Boot, Spring Data JPA, MySQL and swagger to test api` to use as a **resource service**
+
    * [`micro-sales-service`](https://github.com/ahsumon85/advance-spring-boot-microservice#sales-service--resource-service): Simple REST service created with `Spring Boot, Spring Data JPA, MySQL and swagger to test api` to use as a **resource service**
+
+* [`docker-deployment`](https://github.com/ahsumon85/advance-spring-boot-microservice#docker-deployment):Containerize deployment; Microservice docker deployment using docker, docker-compose
 
 ### tools you will need
 * Maven 3.0+ is your build tool
@@ -595,3 +601,18 @@ After sucessfully run we can refresh Eureka Discovery-Service URL: `http://local
 After we seen start auth, sales, item, zuul instance then we can try `advance-microservice-architecture.postman_collection.json` imported API from postman with token
 
 
+
+# docker-deployment
+
+Now we will show you how to Dockerize microservice.
+
+Tested with
+
+- Docker 19.03
+- Ubuntu 19
+- Java 8 or Java 11
+- Maven
+
+## Create Dockerfile on  all project
+
+![Screenshot from 2020-12-07 16-55-09](https://user-images.githubusercontent.com/31319842/101343056-a2fe3b00-38ad-11eb-8ace-ebd63f625e1d.png) ![Screenshot from 2020-12-07 16-55-01](https://user-images.githubusercontent.com/31319842/101343063-a4c7fe80-38ad-11eb-999d-430b59bf8fd5.png) ![Screenshot from 2020-12-07 16-54-51](https://user-images.githubusercontent.com/31319842/101343073-a5f92b80-38ad-11eb-9e4e-727f94d6f835.png) ![Screenshot from 2020-12-07 16-54-34](https://user-images.githubusercontent.com/31319842/101343075-a691c200-38ad-11eb-9d30-c8a83316f7c8.png)![Screenshot from 2020-12-07 16-54-21](https://user-images.githubusercontent.com/31319842/101343079-a7c2ef00-38ad-11eb-94b2-f4459a8f28ff.png)
