@@ -648,6 +648,8 @@ $ java -jar micro-gateway-service/target/micro-gateway-service-0.0.1-SNAPSHOT.ja
 
 ## Docker File
 
+**FORM**
+
 A `Dockerfile` is a text file, contains all the commands to assemble the docker image. Review the commands in the `Dockerfile`:
 
 It creates a docker image base on `openjdk:8` and download `jdk` from Docker Hub This base image `openjdk:8` is just an example, we can find more base images from the official [Docker Hub](https://hub.docker.com/r/adoptopenjdk/openjdk11)
@@ -656,11 +658,15 @@ It creates a docker image base on `openjdk:8` and download `jdk` from Docker Hub
 FROM openjdk:8
 ```
 
+**VOLUME**
+
 A volume is a persistent data stored it used to stored log file into the local directory in the define location 
 
 ```
 VOLUME /app/log
 ```
+
+**ADD**
 
 This tells Docker to copy files from the local file-system to a specific folder inside the build image. Here, we copy our `.jar` file to the build image inside `target/X.X.0.1.jar`
 
@@ -669,5 +675,33 @@ The `ADD` command requires a `source` and a `destination`.
 If `source` is a file, it is simply copied to the `destination` directory.
 
 ```
-ADD target/X.X.0.1.jar drug-prod-ms-rs-0.0.1-SNAPSHOT.jar
+ADD target/X.X.0.1.jar X.X.0.1.jar
+```
+
+- If `source` is a file, it is simply copied to the `destination` directory.
+- If `source` is a directory, its *contents* are copied to the `destination`, but the directory itself is not copied.
+- `source` can be either a tarball or a URL (as well).
+- `source` needs to be within the directory where the `docker build` command was run.
+- Multiple sources can be used in one `ADD` command.
+
+**EXPOSE**
+
+Writing `EXPOSE` in your Dockerfile, is merely a hint that a certain port is useful. Docker won’t do anything with that information by itself.
+
+Defining a port as “exposed” doesn’t publish the port by itself.
+
+```
+EXPOSE 8380
+```
+
+**ENTRYPOINT**
+
+Run the jar file with `ENTRYPOINT`.
+
+`<instruction> [“executable”, “parameter”]`
+
+`ENTRYPOINT ["echo", "Hello World"] (exec form)`
+
+```
+ENTRYPOINT ["java", "-jar", "X.X.0.1.jar"]
 ```
