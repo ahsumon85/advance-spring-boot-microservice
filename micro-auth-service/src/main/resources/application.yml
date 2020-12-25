@@ -37,4 +37,12 @@ management:
       exposure:
         include: -*
         exclude: env,beans
+
+logging:
+  file: /app/log/auth.log
+  level:
+    root: WARN
+    org.springframework.web: DEBUG
+    org.hibernate: ERROR
+    org.springframework: INFO
     

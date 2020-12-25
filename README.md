@@ -636,7 +636,7 @@ $ cd advance-spring-boot-microservice
 $ mvn clean install
 ```
 
-**Run the Spring Boot using terminal **
+**Run the Spring Boot application using terminal **
 
 ```
 $ java -jar micro-eureka-service/target/micro-eureka-service-0.0.1-SNAPSHOT.jar 
@@ -654,5 +654,11 @@ It creates a docker image base on `openjdk:8` and download `jdk` from Docker Hub
 
 ```
 FROM openjdk:8
+```
+
+A volume is a persistent data stored in
+
+```
+VOLUME /app/log
 ```
 
