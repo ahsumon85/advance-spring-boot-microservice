@@ -617,17 +617,11 @@ Tested with
 
 **Next, we containerize this application by adding a `Dockerfile`:** 
 
+See the `Dockerfile` at the root of the project? We only need this `Dockerfile` text file to dockerize the Spring Boot application:
 
-![Screenshot from 2020-12-07 16-55-09](https://user-images.githubusercontent.com/31319842/101343056-a2fe3b00-38ad-11eb-8ace-ebd63f625e1d.png) ![Screenshot from 2020-12-07 16-55-01](https://user-images.githubusercontent.com/31319842/101343063-a4c7fe80-38ad-11eb-999d-430b59bf8fd5.png) ![Screenshot from 2020-12-07 16-54-51](https://user-images.githubusercontent.com/31319842/101343073-a5f92b80-38ad-11eb-9e4e-727f94d6f835.png)
+Below we create simple `Dockerfile` under the project like as:
 
-
-![Screenshot from 2020-12-07 16-54-34](https://user-images.githubusercontent.com/31319842/101343075-a691c200-38ad-11eb-9d30-c8a83316f7c8.png)![Screenshot from 2020-12-07 16-54-21](https://user-images.githubusercontent.com/31319842/101343079-a7c2ef00-38ad-11eb-94b2-f4459a8f28ff.png)
-
-
-
-See the `Dockerfile` at the root of the project? We only need this `Dockerfile` text file to dockerize the Spring Boot application.
-
-##  Compile services
+![Screenshot from 2020-12-08 11-29-59](https://user-images.githubusercontent.com/31319842/101444047-de9a1300-3948-11eb-92d5-f36f34244599.png)
 
 **Done, create  .jar with Maven.**
 
@@ -705,3 +699,20 @@ Run the jar file with `ENTRYPOINT`.
 ```
 ENTRYPOINT ["java", "-jar", "X.X.0.1.jar"]
 ```
+
+
+
+## Create `Dockerfile` in the services
+
+### Dockerizing the Eureka Service using Dockerfile
+![Screenshot from 2020-12-08 11-00-07](https://user-images.githubusercontent.com/31319842/101447224-f96f8600-394e-11eb-95ec-3245652809a1.png)
+### Dockerizing the Authorization Service using Dockerfile
+![Screenshot from 2020-12-08 11-00-13](https://user-images.githubusercontent.com/31319842/101447221-f8d6ef80-394e-11eb-8afc-4d2295dbc9a0.png)
+### Dockerizing the Item Service using Dockerfile
+![Screenshot from 2020-12-08 10-59-49](https://user-images.githubusercontent.com/31319842/101447229-fbd1e000-394e-11eb-8686-e42a0bd1c1fc.png)
+### Dockerizing the Sales Service using Dockerfile
+![Screenshot from 2020-12-08 10-59-42](https://user-images.githubusercontent.com/31319842/101447230-fc6a7680-394e-11eb-9e61-3470c84fca3c.png)
+### Dockerizing the Gateway Service using Dockerfile
+![Screenshot from 2020-12-08 10-59-57](https://user-images.githubusercontent.com/31319842/101447226-fb394980-394e-11eb-81c7-4b72881d5ea5.png)
+
+
