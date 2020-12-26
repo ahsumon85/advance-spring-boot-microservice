@@ -602,7 +602,7 @@ After we seen start auth, sales, item, zuul instance then we can try `advance-mi
 
 
 
-# docker-deployment
+# Docker Deployment
 
 Now we will show you how to Dockerize microservice.
 
@@ -634,7 +634,10 @@ $ java -jar micro-gateway-service/target/micro-gateway-service-0.0.1-SNAPSHOT.ja
 
 **Next, we containerize this application by adding a `Dockerfile`:** 
 
-See the `Dockerfile` at the root of the project? We only need this `Dockerfile` text file to dockerize the Spring Boot application:
+See the `Dockerfile` at the root of the project? We only need this `Dockerfile` text file to dockerize the Spring Boot application. now we will cover the two most commonly used approaches:
+
+- **Dockerfile** – Specifying a file that contains native Docker commands to build the image
+- **Maven** – Using a Maven plugin to build the image
 
 Below we create simple `Dockerfile` under the project like as:
 
@@ -704,13 +707,46 @@ ENTRYPOINT ["java", "-jar", "X.X.0.1.jar"]
 
 
 
-## Create `Dockerfile` in the services
+## Dockerizing the microservice
 
 ### Dockerizing the Eureka Service using `Dockerfile`
 
 The content of the file itself can look something like this:
 
 ![Screenshot from 2020-12-08 11-00-07](https://user-images.githubusercontent.com/31319842/101447224-f96f8600-394e-11eb-95ec-3245652809a1.png)
+
+**Let's build the image using this Dockerfile. Move to the root directory of the application and run this command:**
+
+```
+$ cd advance-spring-boot-microservice/micro-eureka-service/
+
+$ pwd
+/home/ahasan/advance-spring-boot-microservice/micro-eureka-service
+
+$ ls
+Dockerfile  pom.xml  src  target
+
+$ docker build . -t eureka-server:0.1
+```
+
+**Run docker eureka-server image**
+
+Start the docker container `eureka-server:0.1`, run the `micro-eureka-service/target/micro-eureka-service-0.0.1-SNAPSHOT.jar` file during startup.
+
+- Add `run -d` to start the container in detach mode – run the container in the background.
+- Add `run -p` to map ports.
+- Add `run --nmae` to create container name
+- Add `eureka-server:0.1 ` image name
+
+```
+$ docker run -d \
+	-p 8761:8761 \
+	--name eureka \
+	 eureka-server:0.1 
+```
+
+
+
 ### Dockerizing the Authorization Service using `Dockerfile`
 
 The content of the file itself can look something like this:
