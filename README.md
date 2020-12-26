@@ -2,7 +2,7 @@
 
 ## Overview
 
-**The architecture is composed by five services: **
+### The architecture is composed by five services: 
 
    * [`micro-api-getway`](https://github.com/ahsumon85/advance-spring-boot-microservice#api-gateway-service): API Gateway created by **Zuul** that is internally uses Ribbon **Load Balancer**  and  also can monitor Hystrix stream from every API request by **Hystrix**
 
