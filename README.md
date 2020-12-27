@@ -1,6 +1,7 @@
 # Hystrix Dashboard, Swagger2 with [simple-spring-boot-microservice](https://github.com/ahsumon85/simple-spring-boot-microservice)
 
 ## Overview
+
 **The architecture is composed by five services: **
 
    * [`micro-api-getway`](https://github.com/ahsumon85/advance-spring-boot-microservice#api-gateway-service): API Gateway created by **Zuul** that is internally uses Ribbon **Load Balancer**  and  also can monitor Hystrix stream from every API request by **Hystrix**
@@ -245,7 +246,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 }
 ````
 
-### Now we can test it in our browser by visiting:
+### Now we can test it in our browser by visiting
 
 ![Screenshot from 2020-12-07 15-41-54](https://user-images.githubusercontent.com/31319842/101335171-09319080-38a3-11eb-99d2-45972effff7b.png)
 
@@ -268,6 +269,7 @@ curl --request GET 'localhost:8180/item-api/item/find' --header 'Authorization: 
 ### For getting All API Information
 
 On this repository we will see `secure-microservice-architecture.postman_collection.json` file, this file have to `import` on postman then we will ses all API information for testing api.
+
 
 
 
@@ -411,12 +413,13 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 }
 ````
 
-#### Now we can test it in our browser by visiting:
+#### Now we can test it in our browser by visiting
 
 `http://localhost:8180/sales-api/swagger-ui.html`
 
 ![Screenshot from 2020-12-07 15-22-21](https://user-images.githubusercontent.com/31319842/101333238-93c4c080-38a0-11eb-8f06-02c29558a31b.png)
 
+### Oauth2 login UI
 <img src="https://user-images.githubusercontent.com/31319842/101333236-932c2a00-38a0-11eb-8bdb-bde71fa98a7f.png" alt="Screenshot from 2020-12-07 15-22-53" style="height:%" />
 
 
