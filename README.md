@@ -799,7 +799,7 @@ Start the docker container `auth-server:0.1`, run the `micro-auth-service/target
 - Add `run ---add-host` to connect remote database from container application 
 - Add `run --link` to connect eureka server
 - Add `run -d` to start the container in detach mode – run the container in the background.
-- Add `eureka-server:0.1 ` image name
+- Add `auth-server:0.1 ` image name
 
 ```
 $ docker run --name auth \
