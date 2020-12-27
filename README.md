@@ -715,7 +715,7 @@ The content of the file itself can look something like this:
 
 ![Screenshot from 2020-12-08 11-00-07](https://user-images.githubusercontent.com/31319842/101447224-f96f8600-394e-11eb-95ec-3245652809a1.png)
 
-**Let's build the image using this Dockerfile. Move to the root directory of the application and run this command:**
+#### Let's build the image using this Dockerfile. Move to the root directory of the application and run this command:
 
 ```
 $ cd advance-spring-boot-microservice/micro-eureka-service/
@@ -729,13 +729,13 @@ Dockerfile  pom.xml  src  target
 $ docker build . -t eureka-server:0.1
 ```
 
-**Run docker eureka-server image**
+#### Run docker eureka-server image
 
 Start the docker container `eureka-server:0.1`, run the `micro-eureka-service/target/micro-eureka-service-0.0.1-SNAPSHOT.jar` file during startup.
 
 - Add `run -d` to start the container in detach mode – run the container in the background.
 - Add `run -p` to map ports.
-- Add `run --nmae` to create container name
+- Add `run --name to create container name
 - Add `eureka-server:0.1 ` image name
 
 ```
@@ -749,9 +749,67 @@ $ docker run -d \
 
 ### Dockerizing the Authorization Service using `Dockerfile`
 
+First of all we need to change the **database** connection details and **eureka** server ip  of the **application.properties**
+
+- container name **i.e.eureka** instead of **localhost**. The **eureka** must be container name of eureka server
+
+- container name **i.e.mysqldb** instead of **localhost**. The **mysqldb** must be container name of database server
+
+```
+spring:
+  datasource:
+    url: jdbc:mysql://mysqldb:3306/spring_rest?createDatabaseIfNotExist=true
+    username: admin
+    password: Ati@2020
+ 
+eureka:
+  client:
+    service-url:
+      defaultZone: http://eureka:8761/eureka/
+  instance:
+    prefer-ip-address: true
+```
+
 The content of the file itself can look something like this:
 
 ![Screenshot from 2020-12-08 11-00-13](https://user-images.githubusercontent.com/31319842/101447221-f8d6ef80-394e-11eb-8afc-4d2295dbc9a0.png)
+#### Let's build the image using this Dockerfile. Move to the root directory of the application and run this command:
+
+```
+$ cd advance-spring-boot-microservice/micro-auth-service/
+
+$ pwd
+/home/ahasan/advance-spring-boot-microservice/micro-auth-service
+
+$ ls
+Dockerfile  pom.xml  src  target
+
+$ docker build . -t auth-server:0.1
+```
+
+#### Run docker auth-server image
+
+Start the docker container `auth-server:0.1`, run the `micro-auth-service/target/micro-auth-service-0.0.1-SNAPSHOT.jar` file during startup.
+
+##### Run auth service with remote or local database
+
+- Add `run --name`to create container name
+- Add `run -p` to map ports.
+- Add `run -v` to map stored log file into the local directory
+- Add `run ---add-host` to connect remote database from container application 
+- Add `run --link` to connect eureka server
+- Add `run -d` to start the container in detach mode – run the container in the background.
+- Add `eureka-server:0.1 ` image name
+
+```
+$ docker run --name auth \
+        -p 9191:9191 \
+        -v /opt/docker/log:/app/log \
+        --add-host mysqldb:192.168.0.33 \
+        --link eureka:eureka \
+        -d auth-server:0.1  
+```
+
 ### Dockerizing the Item Service using `Dockerfile`
 
 The content of the file itself can look something like this:
