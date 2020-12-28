@@ -1,4 +1,4 @@
-# Hystrix Dashboard, Swagger2 with [simple-spring-boot-microservice](https://github.com/ahsumon85/simple-spring-boot-microservice)
+# Hystrix Dashboard, Swagger2 with [advance-spring-boot-microservice](https://github.com/ahsumon85/advance-spring-boot-microservice)
 
 ## Overview
 
@@ -14,46 +14,30 @@
 
    * [`micro-sales-service`](https://github.com/ahsumon85/advance-spring-boot-microservice#sales-service--resource-service): Simple REST service created with `Spring Boot, Spring Data JPA, MySQL and swagger to test api` to use as a **resource service**
 
+`Follow the link to see docker deployment with docker,docker-compose` [`dockerized-spring-boot-microservice`](https://github.com/ahsumon85/dockerized-spring-boot-microservice) 
 
 ### Tools you will need
+
 * Maven 3.0+ is your build tool
 * Your favorite IDE but we will recommend `STS-4-4.4.1 version`. We use STS.
 * MySQL server
 * JDK 1.8+
 
-### How to run secure microservice?
+### How to run advance microservice?
 
 **Application Running Process**:
 
 - First we need to run `eureka service`
 - Second we need to run `auth-service`
 - Third we need to run `item-servic` and `sales-service`
-- At last we need to run `gateway-service`
+- At last we need to run `gateway-service`, if we did run `gateway-service` before running `auth-service and iteam,sales-service` then we have to wait approximately 10 second 
 
-**Build Project**
 
-Now, you can create an executable JAR file, and run the Spring Boot application by using the Maven or Gradle commands shown below −
-For Maven, use the command as shown below −
-
-`mvn clean install`
-
-or
-
-**Project import in sts4 IDE** 
-```File > import > maven > Existing maven project > Root Directory-Browse > Select project form root folder > Finish```
-
-**Run project **
-
-After “BUILD SUCCESSFUL”, you can find the JAR file under the build/libs directory.
-Now, run the JAR file by using the following command −
-
-Run on terminal `java –jar <JARFILE> `
-
- Run on sts IDE
+ **Run on sts IDE**
 
  `click right button on the project >Run As >Spring Boot App`
 
-After successfully run then we will refresh `eureka` and make sure to run `auth`, `item`, `sales` and `gateway`
+After successfully run then we will refresh `eureka` dashboard and make sure to run `auth`, `item`, `sales` and `gateway` on the eureka dashboard.
 
 Eureka Discovery-Service URL: `http://localhost:8761`
 
@@ -69,6 +53,35 @@ Eureka Server is an application that holds the information about all client-serv
 
 An **Authorization Server** issues tokens to client applications on behalf of a **Resource** Owner for use in authenticating subsequent API calls to the **Resource Server**. The **Resource Server** hosts the protected **resources**, and can accept or respond to protected **resource** requests using access tokens.
 
+### CORS filter Configure
+
+Let’s create a class `WebSecurityConfiguration.java` to configure CORS Filte.
+
+* **corsFilter** Apparently the Oauth2 endpoints and filters get processed before getting to the Spring Security filter chain, so adding CORS filters normally wouldn't work, but adding a CORS filter bean with high order priority ended up working.
+
+  This is my dedicated configuration class for CORS (adapted from the official spring guide, I'll be tweaking it later)
+
+```
+@Configuration
+public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
+
+	  @Bean
+    public FilterRegistrationBean<CorsFilter> corsFilter() {
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        CorsConfiguration config = new CorsConfiguration();
+        config.setAllowCredentials(true);
+        config.addAllowedOrigin("*");
+        config.addAllowedHeader("*");
+        config.addAllowedMethod("*");
+        source.registerCorsConfiguration("/**", config);
+        FilterRegistrationBean<CorsFilter> bean = new FilterRegistrationBean<CorsFilter>(new CorsFilter(source));
+        bean.setOrder(Ordered.HIGHEST_PRECEDENCE);
+        return bean;
+    }
+}
+```
+
+
 ### Test Authorization Service
 **Get Access Token**
 
@@ -80,26 +93,26 @@ Now hit the POST method URL via POSTMAN to get the OAUTH2 token.
 
 Now, add the Request Headers as follows −
 
-* `Authorization` − Basic Auth with your Client Id and Client secret.
+* `Authorization` − Basic Auth with your `Client Id` and `Client secret`
 
 * `Content Type` − application/x-www-form-urlencoded
-  ![1](https://user-images.githubusercontent.com/31319842/95816138-2e40d180-0d40-11eb-99c7-403cdf7ef070.png)
+![Screenshot from 2020-12-09 10-22-05](https://user-images.githubusercontent.com/31319842/101584943-ed47ff00-3a08-11eb-9d01-e196e0e089a6.png)
 
 Now, add the Request Parameters as follows −
 
 * `grant_type` = password
 * `username` = your username
 * ` password` = your password
-![2](https://user-images.githubusercontent.com/31319842/95816163-3bf65700-0d40-11eb-9c87-7b721e0a268f.png)
+![Screenshot from 2020-12-09 10-22-12](https://user-images.githubusercontent.com/31319842/101584942-ec16d200-3a08-11eb-9355-0e082a2493c7.png)
 
 **HTTP POST Response**
 ```
-{ 
-  "access_token":"000ff762-414c-4605-858a-0ed7bee6f68e",
-  "token_type":"bearer",
-  "refresh_token":"79aabc70-f310-4c49-bf7e-516208b3bef4",
-  "expires_in":999999,
-  "scope":"read write"
+{
+    "access_token": "615ca239-7394-463a-8032-94dddd612dcf",
+    "token_type": "bearer",
+    "refresh_token": "33a3278e-4d62-4a93-8af6-11c0507b7a78",
+    "expires_in": 3478,
+    "scope": "READ WRITE"
 }
 ```
 
@@ -413,7 +426,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 }
 ````
 
-#### Now we can test it in our browser by visiting
+### Now we can test it in our browser by visiting
 
 `http://localhost:8180/sales-api/swagger-ui.html`
 
@@ -507,7 +520,7 @@ zuul.ribbon-isolation-strategy=thread
 zuul.thread-pool.use-separate-thread-pools=true
 ```
 
-#### Hystrix dashboard view
+### Hystrix dashboard view
 
 * To **monitor via Hystrix dashboard**, open Hystrix dashboard at `http://localhost:8180/hystrix`
 
@@ -521,10 +534,19 @@ zuul.thread-pool.use-separate-thread-pools=true
 
 
 
-####  To make sure all service is runinng
+###  To make sure all service is runinng
 
 After sucessfully run we can refresh Eureka Discovery-Service URL: `http://localhost:8761` will see `zuul-server` on eureka dashboard. the gateway instance will be run on `http://localhost:8180` port
 
 ![Screenshot from 2020-11-15 11-21-33](https://user-images.githubusercontent.com/31319842/99894579-6af0d880-2caf-11eb-84aa-d41b16cfbd12.png)
 
 After we seen start auth, sales, item, zuul instance then we can try `advance-microservice-architecture.postman_collection.json` imported API from postman with token
+
+
+
+# Docker-Deployment with [advance-microservice](https://github.com/ahsumon85/advance-spring-boot-microservice)
+
+**Below we will see how to configure docker and docker-compose in microservice**
+
+**To follow link**  [dockerized-spring-boot-microservice](https://github.com/ahsumon85/dockerized-spring-boot-microservice) 
+
