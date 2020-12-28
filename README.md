@@ -1,4 +1,4 @@
-# Hystrix Dashboard, Swagger2 with [advance-spring-boot-microservice](https://github.com/ahsumon85/advance-spring-boot-microservice)
+# Hystrix Dashboard, Swagger2 with [secure-spring-boot-microservice](https://github.com/ahsumon85/secure-spring-boot-microservice)
 
 ## Overview
 
@@ -10,7 +10,7 @@
 
    * [`micro-auth-service`](https://github.com/ahsumon85/advance-spring-boot-microservice#authorization-service): Simple REST service created with `Spring Boot, Spring Cloud Oauth2, Spring Data JPA, MySQL` to use as an **authorization service**
 
-   * [`micro-item-service`](https://github.com/ahsumon85/advance-spring-boot-microservice#item-service--resource-service): Simple REST service created with `Spring Boot, Spring Data JPA, MySQL and swagger to test api` to use as a **resource service**
+   * [`micro-item-service`](https://github.com/ahsumon85/advance-spring-boot-microservice#item-service---resource-service): Simple REST service created with `Spring Boot, Spring Data JPA, MySQL and swagger to test api` to use as a **resource service**
 
    * [`micro-sales-service`](https://github.com/ahsumon85/advance-spring-boot-microservice#sales-service--resource-service): Simple REST service created with `Spring Boot, Spring Data JPA, MySQL and swagger to test api` to use as a **resource service**
 
